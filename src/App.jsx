@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from './utils/socket';
+import { supabase } from './utils/supabase';
+import defaultSeminaristas from '../server/data/seminaristas.json';
+import defaultState from '../server/data/state.json';
 import HeaderBanner from './components/HeaderBanner';
 import TVView from './components/TVView';
 import TabletAdmin from './components/TabletAdmin';
@@ -8,8 +11,8 @@ import VoterMobile from './components/VoterMobile';
 import { Tv, Tablet, Smartphone, Sparkles, ExternalLink, Wifi, Shield } from 'lucide-react';
 
 export default function App() {
-  const [electionState, setElectionState] = useState(null);
-  const [seminaristas, setSeminaristas] = useState([]);
+  const [electionState, setElectionState] = useState(defaultState);
+  const [seminaristas, setSeminaristas] = useState(defaultSeminaristas);
   const [networkInfo, setNetworkInfo] = useState(null);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
@@ -20,23 +23,108 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // 1. Fetch seminaristas safely
     fetch('/api/seminaristas')
-      .then(res => res.json())
-      .then(data => setSeminaristas(data))
-      .catch(err => console.error('Error fetching seminaristas:', err));
-
-    fetch('/api/network-info')
-      .then(res => res.json())
-      .then(data => setNetworkInfo(data))
-      .catch(err => console.error('Error fetching network info:', err));
-
-    fetch('/api/state')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('API response not OK');
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
+        return res.json();
+      })
       .then(data => {
-        if (data && !data.error) setElectionState(data);
+        if (Array.isArray(data) && data.length > 0) setSeminaristas(data);
+      })
+      .catch(() => {
+        // Fallback to defaultSeminaristas already loaded
+      });
+
+    // 2. Fetch network info safely
+    fetch('/api/network-info')
+      .then(res => {
+        if (!res.ok) throw new Error('Network info not OK');
+        return res.json();
+      })
+      .then(data => setNetworkInfo(data))
+      .catch(() => {});
+
+    // 3. Fetch state via REST fallback safely
+    fetch('/api/state')
+      .then(res => {
+        if (!res.ok) throw new Error('State response not OK');
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
+        return res.json();
+      })
+      .then(data => {
+        if (data && !data.error && data.status) setElectionState(data);
       })
       .catch(() => {});
 
+    // 4. Supabase Realtime fallback (essential for Vercel deployment)
+    let supabaseChannel = null;
+    if (supabase) {
+      supabase
+        .from('coord_election_state')
+        .select('*')
+        .eq('id', 'current')
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (data && !error) {
+            setElectionState(prev => ({
+              ...prev,
+              status: data.status || prev.status,
+              eligibleCourses: data.eligible_courses || prev.eligibleCourses,
+              votingCourses: data.voting_courses || prev.votingCourses,
+              candidates: data.candidates || prev.candidates,
+              selectedCandidateIds: (data.candidates || []).map(c => c.id),
+              round1Votes: data.round1_votes || {},
+              round2Votes: data.round2_votes || {},
+              runoffCandidates: data.runoff_candidates || [],
+              winner: data.winner || null,
+              coordinations: data.coordinations || prev.coordinations,
+              coordinators: data.coordinators || prev.coordinators,
+              r1VoteCount: Object.keys(data.round1_votes || {}).length,
+              r2VoteCount: Object.keys(data.round2_votes || {}).length,
+              r1VotedIds: Object.keys(data.round1_votes || {}),
+              r2VotedIds: Object.keys(data.round2_votes || {}),
+            }));
+          }
+        })
+        .catch(() => {});
+
+      supabaseChannel = supabase
+        .channel('public:coord_election_state')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'coord_election_state' },
+          (payload) => {
+            if (payload.new) {
+              const data = payload.new;
+              setElectionState(prev => ({
+                ...prev,
+                status: data.status || prev.status,
+                eligibleCourses: data.eligible_courses || prev.eligibleCourses,
+                votingCourses: data.voting_courses || prev.votingCourses,
+                candidates: data.candidates || prev.candidates,
+                selectedCandidateIds: (data.candidates || []).map(c => c.id),
+                round1Votes: data.round1_votes || {},
+                round2Votes: data.round2_votes || {},
+                runoffCandidates: data.runoff_candidates || [],
+                winner: data.winner || null,
+                coordinations: data.coordinations || prev.coordinations,
+                coordinators: data.coordinators || prev.coordinators,
+                r1VoteCount: Object.keys(data.round1_votes || {}).length,
+                r2VoteCount: Object.keys(data.round2_votes || {}).length,
+                r1VotedIds: Object.keys(data.round1_votes || {}),
+                r2VotedIds: Object.keys(data.round2_votes || {}),
+              }));
+            }
+          }
+        )
+        .subscribe();
+    }
+
+    // 5. WebSocket handlers (for local network high-speed sync)
     const handleState = (newState) => {
       setElectionState(newState);
     };
@@ -53,6 +141,9 @@ export default function App() {
     return () => {
       socket.off('election:state', handleState);
       socket.off('connect');
+      if (supabaseChannel) {
+        supabase.removeChannel(supabaseChannel);
+      }
     };
   }, []);
 

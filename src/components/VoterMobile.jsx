@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
+import { supabase } from '../utils/supabase';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { 
   CheckCircle2, 
@@ -93,26 +94,52 @@ export default function VoterMobile({ state, seminaristas = [] }) {
     setSelectedCandidateId(candidateId);
   };
 
-  const handleConfirmVote = () => {
+  const handleConfirmVote = async () => {
     if (!selectedCandidateId || isSubmitting) return;
     setIsSubmitting(true);
     setErrorMsg('');
 
-    socket.emit('election:cast_vote', {
+    const votePayload = {
       voterId: selectedVoterId,
       cedula: cedulaInput,
       candidateId: selectedCandidateId,
       round: currentRound
-    }, (res) => {
-      setIsSubmitting(false);
-      if (res?.error) {
-        setErrorMsg(res.error);
-      } else {
-        soundEffects.playSuccess();
-        setVotedSuccess(true);
-        setShowConfirmModal(false);
+    };
+
+    if (socket.connected) {
+      socket.emit('election:cast_vote', votePayload, (res) => {
+        setIsSubmitting(false);
+        if (res?.error) {
+          setErrorMsg(res.error);
+        } else {
+          soundEffects.playSuccess();
+          setVotedSuccess(true);
+          setShowConfirmModal(false);
+        }
+      });
+    } else {
+      // Fallback to Supabase direct record when deployed on Vercel
+      try {
+        if (supabase) {
+          await supabase.from('coord_votes').upsert({
+            voter_id: selectedVoterId,
+            round: currentRound,
+            candidate_id: selectedCandidateId,
+            created_at: new Date().toISOString()
+          }, { onConflict: 'voter_id,round' });
+
+          soundEffects.playSuccess();
+          setVotedSuccess(true);
+          setShowConfirmModal(false);
+        } else {
+          setErrorMsg('No hay conexión con el servidor.');
+        }
+      } catch (err) {
+        setErrorMsg('Error al registrar voto: ' + (err.message || 'Error de red'));
+      } finally {
+        setIsSubmitting(false);
       }
-    });
+    }
   };
 
   const normalizeStr = (str) =>
