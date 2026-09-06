@@ -436,10 +436,13 @@ export class ElectionManager {
   resetElection() {
     this.state = this.getInitialState();
     if (fs.existsSync(STATE_BACKUP_PATH)) {
-      fs.unlinkSync(STATE_BACKUP_PATH);
+      try {
+        fs.unlinkSync(STATE_BACKUP_PATH);
+      } catch (e) {}
     }
     if (supabase) {
-      supabase.from('coord_votes').delete().neq('voter_id', '__none__').catch(() => {});
+      Promise.resolve(supabase.from('coord_votes').delete().neq('voter_id', '__none__'))
+        .catch(() => {});
     }
     this.broadcastState();
     return { success: true };

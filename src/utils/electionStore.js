@@ -60,20 +60,22 @@ export function broadcastStateChange(newState, onUpdateState) {
   } catch (e) {}
 
   if (supabase) {
-    supabase.from('coord_election_state').upsert({
-      id: 'current',
-      status: newState.status,
-      eligible_courses: newState.eligibleCourses,
-      voting_courses: newState.votingCourses,
-      candidates: newState.candidates,
-      round1_votes: newState.round1Votes || {},
-      round2_votes: newState.round2Votes || {},
-      runoff_candidates: newState.runoffCandidates || [],
-      winner: newState.winner || null,
-      coordinations: newState.coordinations || {},
-      coordinators: newState.coordinators || {},
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'id' }).catch(() => {});
+    Promise.resolve(
+      supabase.from('coord_election_state').upsert({
+        id: 'current',
+        status: newState.status,
+        eligible_courses: newState.eligibleCourses,
+        voting_courses: newState.votingCourses,
+        candidates: newState.candidates,
+        round1_votes: newState.round1Votes || {},
+        round2_votes: newState.round2Votes || {},
+        runoff_candidates: newState.runoffCandidates || [],
+        winner: newState.winner || null,
+        coordinations: newState.coordinations || {},
+        coordinators: newState.coordinators || {},
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' })
+    ).catch(() => {});
   }
 }
 
