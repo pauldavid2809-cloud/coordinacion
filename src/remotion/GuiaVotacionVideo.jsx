@@ -5,7 +5,6 @@ import { Scene2Access } from './scenes/Scene2Access';
 import { Scene3Identity } from './scenes/Scene3Identity';
 import { Scene4Vote } from './scenes/Scene4Vote';
 import { Scene5TV } from './scenes/Scene5TV';
-import { Scene6Outro } from './scenes/Scene6Outro';
 
 export const GuiaVotacionVideo = () => {
   return (
@@ -18,7 +17,7 @@ export const GuiaVotacionVideo = () => {
       }}
     >
       <Series>
-        {/* Scene 1: Portada y Bienvenida Solemne (5 seg / 150 frames) */}
+        {/* Scene 1: Portada y Apertura Solemne (5 seg / 150 frames) */}
         <Series.Sequence durationInFrames={150}>
           <Scene1Intro />
         </Series.Sequence>
@@ -28,7 +27,7 @@ export const GuiaVotacionVideo = () => {
           <Scene2Access />
         </Series.Sequence>
 
-        {/* Scene 3: Identificación Rápida y Master Key (7 seg / 210 frames) */}
+        {/* Scene 3: Identificación Rápida y Cédula (7 seg / 210 frames) */}
         <Series.Sequence durationInFrames={210}>
           <Scene3Identity />
         </Series.Sequence>
@@ -41,11 +40,6 @@ export const GuiaVotacionVideo = () => {
         {/* Scene 5: TV en Vivo y Distribución de Oficios (8 seg / 240 frames) */}
         <Series.Sequence durationInFrames={240}>
           <Scene5TV />
-        </Series.Sequence>
-
-        {/* Scene 6: Cierre Solemne y Cita Bíblica (5 seg / 150 frames) */}
-        <Series.Sequence durationInFrames={150}>
-          <Scene6Outro />
         </Series.Sequence>
       </Series>
     </div>

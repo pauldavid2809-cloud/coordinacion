@@ -1,5 +1,5 @@
 import React from 'react';
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 
 export const Scene1Intro = () => {
   const frame = useCurrentFrame();
@@ -85,8 +85,8 @@ export const Scene1Intro = () => {
           position: 'relative',
         }}
       >
-        <img
-          src="/logo.png"
+        <Img
+          src={staticFile('logo.png')}
           alt="Escudo Oficial"
           style={{
             width: '260px',

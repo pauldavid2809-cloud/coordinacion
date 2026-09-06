@@ -378,7 +378,7 @@ export default function App() {
                       Móvil Seminarista
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Tarjetón secreto para los hermanos votantes: validación por Cédula o Clave Maestra.
+                      Tarjetón secreto para los hermanos votantes: validación por Cédula de Identidad oficial.
                     </p>
                   </div>
                   <div className="pt-2 text-xs font-mono font-bold text-emerald-400 inline-flex items-center gap-1.5">
@@ -403,7 +403,7 @@ export default function App() {
                       Guía en Video
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Animación 9:16 para WhatsApp: paso a paso para votar, búsqueda sin tildes y clave maestra.
+                      Animación 9:16 para WhatsApp: paso a paso para votar, búsqueda sin tildes y pantalla TV.
                     </p>
                   </div>
                   <div className="pt-2 text-xs font-mono font-bold text-purple-400 inline-flex items-center gap-1.5">

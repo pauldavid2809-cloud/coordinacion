@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Player } from '@remotion/player';
 import { GuiaVotacionVideo } from '../remotion/GuiaVotacionVideo';
-import { Play, Pause, RotateCcw, ArrowLeft, Smartphone, ShieldCheck, Tv, KeyRound, Sparkles } from 'lucide-react';
+import { Play, Pause, RotateCcw, ArrowLeft, Download, Tv, Globe, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function VideoPlayerView({ onBack }) {
   const playerRef = useRef(null);
@@ -47,7 +47,7 @@ export default function VideoPlayerView({ onBack }) {
 
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Remotion Engine • 40s (1080×1920) WhatsApp</span>
+          <span>Remotion Engine • 35s (1080×1920) WhatsApp</span>
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export default function VideoPlayerView({ onBack }) {
               <Player
                 ref={playerRef}
                 component={GuiaVotacionVideo}
-                durationInFrames={1200}
+                durationInFrames={1050}
                 compositionWidth={1080}
                 compositionHeight={1920}
                 fps={30}
@@ -80,22 +80,34 @@ export default function VideoPlayerView({ onBack }) {
             </div>
           </div>
 
-          {/* Quick Playback bar under phone */}
-          <div className="flex items-center gap-3 mt-4">
-            <button
-              onClick={togglePlay}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-transform active:scale-95"
+          {/* Playback Controls & Download Button */}
+          <div className="w-full max-w-[360px] sm:max-w-[390px] flex flex-col items-center gap-3 mt-4">
+            <div className="flex items-center gap-3 w-full">
+              <button
+                onClick={togglePlay}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-transform active:scale-95"
+              >
+                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                <span>{isPlaying ? 'Pausar' : 'Reproducir'}</span>
+              </button>
+              <button
+                onClick={restartVideo}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-white/10 text-sm font-medium transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Reiniciar</span>
+              </button>
+            </div>
+
+            {/* Download Link */}
+            <a
+              href="/guia_votacion_whatsapp.mp4"
+              download="Guia_Votacion_WhatsApp.mp4"
+              className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-xl shadow-emerald-500/20 transition-all active:scale-95"
             >
-              {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
-              <span>{isPlaying ? 'Pausar' : 'Reproducir'}</span>
-            </button>
-            <button
-              onClick={restartVideo}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-white/10 text-sm font-medium transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Reiniciar</span>
-            </button>
+              <Download className="w-5 h-5" />
+              <span>Descargar Video MP4 (WhatsApp)</span>
+            </a>
           </div>
         </div>
 
@@ -106,11 +118,32 @@ export default function VideoPlayerView({ onBack }) {
               Guía Audiovisual Oficial de Votación
             </h2>
             <p className="text-slate-400 text-sm leading-relaxed">
-              Video tutorial interactivo en formato vertical (9:16), creado para difundir por WhatsApp a los 38 seminaristas votantes y proyectar las reglas del proceso.
+              Video tutorial animado en formato vertical (9:16), creado para difundir por los grupos de WhatsApp del Seminario y guiar a los 38 seminaristas.
             </p>
           </div>
 
-          {/* Scene selector jump buttons */}
+          {/* Quick Download Banner */}
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Archivo de Video Disponible</span>
+              </div>
+              <p className="text-xs text-slate-300">
+                Optimizado para enviar por WhatsApp como archivo MP4 ligero en alta resolución 1080×1920.
+              </p>
+            </div>
+            <a
+              href="/guia_votacion_whatsapp.mp4"
+              download="Guia_Votacion_WhatsApp.mp4"
+              className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              <span>Descargar</span>
+            </a>
+          </div>
+
+          {/* Scene selector jump buttons (5 scenes) */}
           <div className="space-y-3">
             <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-amber-400/80">
               Saltar a Escena del Video:
@@ -122,8 +155,8 @@ export default function VideoPlayerView({ onBack }) {
                 className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
               >
                 <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:00 • Escena 1</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Portada y Bienvenida</div>
-                <div className="text-xs text-slate-400">Escudo oficial y título solemne</div>
+                <div className="text-sm font-bold text-white group-hover:text-amber-300">Portada Oficial</div>
+                <div className="text-xs text-slate-400">Escudo y título del Seminario</div>
               </button>
 
               <button
@@ -131,8 +164,8 @@ export default function VideoPlayerView({ onBack }) {
                 className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
               >
                 <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:05 • Escena 2</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Acceso Universal Móvil</div>
-                <div className="text-xs text-slate-400">Sin instalar apps, vía navegador</div>
+                <div className="text-sm font-bold text-white group-hover:text-amber-300">Acceso Móvil Universal</div>
+                <div className="text-xs text-slate-400">coordinacion-nine.vercel.app</div>
               </button>
 
               <button
@@ -140,8 +173,8 @@ export default function VideoPlayerView({ onBack }) {
                 className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
               >
                 <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:12 • Escena 3</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Búsqueda y Clave Maestra</div>
-                <div className="text-xs text-slate-400">Sin tildes y Bypass 28092002</div>
+                <div className="text-sm font-bold text-white group-hover:text-amber-300">Búsqueda y Cédula</div>
+                <div className="text-xs text-slate-400">Sin tildes y validación con cédula</div>
               </button>
 
               <button
@@ -149,48 +182,39 @@ export default function VideoPlayerView({ onBack }) {
                 className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
               >
                 <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:19 • Escena 4</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Votación y Reglas</div>
-                <div className="text-xs text-slate-400">Voto secreto + 1ª y 2ª vuelta</div>
+                <div className="text-sm font-bold text-white group-hover:text-amber-300">Voto Secreto y Reglas</div>
+                <div className="text-xs text-slate-400">Tarjetón, sello y 1ª/2ª vuelta</div>
               </button>
 
               <button
                 onClick={() => seekToScene(810)}
-                className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
+                className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group sm:col-span-2"
               >
                 <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:27 • Escena 5</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Pantalla TV y Oficios</div>
-                <div className="text-xs text-slate-400">Telemetría y 4 coordinaciones</div>
-              </button>
-
-              <button
-                onClick={() => seekToScene(1050)}
-                className="text-left p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/10 hover:border-amber-400/40 transition-all group"
-              >
-                <div className="text-xs font-mono text-amber-400 font-semibold mb-0.5">00:35 • Escena 6</div>
-                <div className="text-sm font-bold text-white group-hover:text-amber-300">Cierre Solemne</div>
-                <div className="text-xs text-slate-400">Cita bíblica (Mc 9, 35)</div>
+                <div className="text-sm font-bold text-white group-hover:text-amber-300">Pantalla TV y Coordinaciones</div>
+                <div className="text-xs text-slate-400">Escrutinio en vivo, proclamación de Electo y 4 coordinaciones</div>
               </button>
             </div>
           </div>
 
           {/* Highlights Info Cards */}
           <div className="space-y-3 pt-2">
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3.5">
-              <KeyRound className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-start gap-3.5">
+              <Globe className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-amber-300">Clave Maestra para Emergencias</h4>
+                <h4 className="text-sm font-bold text-sky-300">Enlace Oficial de la Plataforma</h4>
                 <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  Si un seminarista olvidó su cédula o no aparece registrada, puede ingresar con la clave maestra <span className="font-mono font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded">28092002</span>.
+                  Los seminaristas ingresan directamente a <span className="font-mono font-bold text-sky-300 bg-sky-950/60 px-1.5 py-0.5 rounded">coordinacion-nine.vercel.app/votar</span> desde cualquier navegador móvil.
                 </p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-start gap-3.5">
-              <Tv className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3.5">
+              <Tv className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-sm font-bold text-sky-300">Transmisión en Salón Principal</h4>
+                <h4 className="text-sm font-bold text-amber-300">Transmisión en Salón Principal</h4>
                 <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  La vista de TV refleja el quórum en vivo conforme votan los 38 electores y proclama al Coordinador General con mayoría calificada (75%).
+                  La pantalla de TV refleja el quórum en vivo y proclama al Coordinador General Electo al alcanzar la mayoría requerida.
                 </p>
               </div>
             </div>

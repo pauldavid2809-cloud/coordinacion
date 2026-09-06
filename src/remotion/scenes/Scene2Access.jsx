@@ -1,5 +1,5 @@
 import React from 'react';
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 
 export const Scene2Access = () => {
   const frame = useCurrentFrame();
@@ -19,7 +19,7 @@ export const Scene2Access = () => {
   });
 
   // URL typing simulation
-  const fullUrl = 'seminario.org/votar';
+  const fullUrl = 'coordinacion-nine.vercel.app/votar';
   const charsShown = Math.min(
     fullUrl.length,
     Math.floor(interpolate(frame, [25, 75], [0, fullUrl.length], { extrapolateRight: 'clamp' }))
@@ -39,7 +39,8 @@ export const Scene2Access = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: '90px 50px',
+        justifyContent: 'center',
+        padding: '70px 50px',
         color: '#FFFFFF',
         fontFamily: 'sans-serif',
         position: 'relative',
@@ -140,9 +141,12 @@ export const Scene2Access = () => {
           <span
             style={{
               fontFamily: 'monospace',
-              fontSize: '26px',
+              fontSize: '19px',
               fontWeight: 'bold',
               color: '#38BDF8',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {typedUrl}
@@ -162,8 +166,8 @@ export const Scene2Access = () => {
             transform: `translateY(${screenContentY}px)`,
           }}
         >
-          <img
-            src="/logo.png"
+          <Img
+            src={staticFile('logo.png')}
             alt="Logo"
             style={{ width: '90px', height: '90px', objectFit: 'contain', marginBottom: '16px' }}
           />

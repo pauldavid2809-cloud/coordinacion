@@ -34,13 +34,6 @@ export const Scene3Identity = () => {
   );
   const typedCedula = cedulaText.slice(0, cedulaChars);
 
-  // Master key callout entrance
-  const masterKeyEntrance = spring({
-    frame: frame - 95,
-    fps,
-    config: { damping: 13, stiffness: 100 },
-  });
-
   return (
     <div
       style={{
@@ -212,63 +205,25 @@ export const Scene3Identity = () => {
         </div>
       </div>
 
-      {/* Master Secret Key Banner (Crucial User Requirement) */}
+      {/* Security & Authentication Pill */}
       <div
         style={{
-          width: '880px',
-          background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.3) 100%)',
-          border: '2.5px solid #FBBF24',
-          borderRadius: '28px',
-          padding: '24px 30px',
-          display: 'flex',
+          display: 'inline-flex',
           alignItems: 'center',
-          gap: '24px',
-          boxShadow: '0 0 45px rgba(245, 158, 11, 0.3)',
-          transform: `scale(${Math.max(0, Math.min(1, masterKeyEntrance))})`,
-          opacity: Math.max(0, Math.min(1, masterKeyEntrance)),
+          gap: '14px',
+          background: 'rgba(56, 189, 248, 0.1)',
+          border: '1.5px solid rgba(56, 189, 248, 0.3)',
+          padding: '16px 36px',
+          borderRadius: '50px',
+          fontSize: '22px',
+          color: '#BAE6FD',
+          boxShadow: '0 0 25px rgba(56, 189, 248, 0.15)',
         }}
       >
-        <div
-          style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '24px',
-            background: 'rgba(251, 191, 36, 0.2)',
-            border: '2px solid #FBBF24',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '40px',
-            flexShrink: 0,
-          }}
-        >
-          🔐
-        </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '6px' }}>
-            <span style={{ fontFamily: 'monospace', fontSize: '20px', fontWeight: 900, color: '#FBBF24', textTransform: 'uppercase' }}>
-              Clave Maestra Secreta de Respaldo:
-            </span>
-            <span
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '28px',
-                fontWeight: 900,
-                color: '#FFFFFF',
-                background: '#B45309',
-                padding: '4px 14px',
-                borderRadius: '12px',
-                border: '1.5px solid #FDE68A',
-                letterSpacing: '2px',
-              }}
-            >
-              28092002
-            </span>
-          </div>
-          <p style={{ fontSize: '20px', color: '#E2E8F0', margin: 0, lineHeight: 1.35 }}>
-            Si el sistema presenta alguna discrepancia con tu cédula, ingresa este código maestro para habilitar tu voto de inmediato.
-          </p>
-        </div>
+        <span style={{ fontSize: '24px' }}>🔒</span>
+        <span style={{ fontFamily: 'sans-serif', fontWeight: 600 }}>
+          Autenticación directa con el Padrón Oficial de Seminaristas
+        </span>
       </div>
     </div>
   );

@@ -35,3 +35,4 @@ Thumbs.db
 # Remotion renders
 out/
 *.mp4
+!public/guia_votacion_whatsapp.mp4

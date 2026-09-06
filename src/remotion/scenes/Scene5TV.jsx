@@ -208,7 +208,7 @@ export const Scene5TV = () => {
                 fontWeight: 900,
               }}
             >
-              ¡Consagrado!
+              ¡Electo!
             </div>
           </div>
         )}
