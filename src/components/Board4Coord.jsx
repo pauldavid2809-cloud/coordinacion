@@ -4,7 +4,14 @@ import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { generateOrdenDeLaCasaPDF } from '../utils/pdfGenerator';
-import { assignCoordinationInState, setAreaCoordinatorInState } from '../utils/electionStore';
+import { 
+  assignCoordinationInState, 
+  setAreaCoordinatorInState,
+  toggleMemberSubgroupInState,
+  addSubgroupInState,
+  removeSubgroupInState,
+  DEFAULT_SUBGROUPS
+} from '../utils/electionStore';
 import { 
   Cross, 
   BookOpen, 
@@ -17,7 +24,11 @@ import {
   Layers,
   GripVertical,
   ArrowDown,
-  FileDown
+  FileDown,
+  Tag,
+  Plus,
+  Trash2,
+  Check
 } from 'lucide-react';
 
 export const COORDINATION_DEFS = {
@@ -79,6 +90,11 @@ export default function Board4Coord({
   const [draggedSemId, setDraggedSemId] = useState(null);
   const [dragOverZone, setDragOverZone] = useState(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [managingModal, setManagingModal] = useState(null);
+  const [newSubgroupInput, setNewSubgroupInput] = useState('');
+
+  const subgroups = state?.subgroups || DEFAULT_SUBGROUPS;
+  const memberSubgroups = state?.memberSubgroups || {};
 
   const handleDownloadPDF = async () => {
     try {
@@ -162,6 +178,37 @@ export default function Board4Coord({
     }
     setDraggedSemId(null);
     setDragOverZone(null);
+  };
+
+  const handleToggleSubgroup = (semId, sgName) => {
+    soundEffects.playClick();
+    if (onUpdateState) {
+      toggleMemberSubgroupInState(state, semId, sgName, onUpdateState);
+    } else {
+      socket.emit('coordination:toggle_subgroup', { seminaristaId: semId, subgroupName: sgName });
+    }
+  };
+
+  const handleAddSubgroup = (coordKey) => {
+    const trimmed = newSubgroupInput.trim();
+    if (!trimmed) return;
+    soundEffects.playClick();
+    if (onUpdateState) {
+      addSubgroupInState(state, coordKey, trimmed, onUpdateState);
+    } else {
+      socket.emit('coordination:add_subgroup', { coordinationKey: coordKey, subgroupName: trimmed });
+    }
+    setNewSubgroupInput('');
+  };
+
+  const handleRemoveSubgroup = (coordKey, sgName) => {
+    if (!window.confirm(`¿Eliminar el oficio o subgrupo "${sgName}" de esta coordinación?`)) return;
+    soundEffects.playClick();
+    if (onUpdateState) {
+      removeSubgroupInState(state, coordKey, sgName, onUpdateState);
+    } else {
+      socket.emit('coordination:remove_subgroup', { coordinationKey: coordKey, subgroupName: sgName });
+    }
   };
 
   // Drag & Drop Handlers
@@ -432,8 +479,24 @@ export default function Board4Coord({
                   </div>
                 </div>
 
-                <div className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full border ${def.badge} shrink-0`}>
-                  {members.length}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {isTabletAdmin && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setManagingModal({ type: 'COORDINATION', coordKey: def.key });
+                      }}
+                      title={`Gestionar oficios de ${def.title}`}
+                      className="p-1 px-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-white/[0.1] text-[10px] flex items-center gap-1 transition-colors"
+                    >
+                      <Tag className="w-3 h-3 text-amber-400" />
+                      <span className="hidden xl:inline">Oficios</span>
+                    </button>
+                  )}
+                  <div className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full border ${def.badge}`}>
+                    {members.length}
+                  </div>
                 </div>
               </div>
 
@@ -490,6 +553,7 @@ export default function Board4Coord({
                   members.map(m => {
                     const isAreaHead = m.id === coordinatorId;
                     const isBeingDragged = draggedSemId === m.id;
+                    const assignedSgs = memberSubgroups[m.id] || [];
 
                     return (
                       <motion.div
@@ -521,12 +585,40 @@ export default function Board4Coord({
                             <span className="text-[10px] font-mono text-slate-400 block leading-none">
                               {m.curso}
                             </span>
+                            {/* Subgrupos asignados */}
+                            {assignedSgs.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {assignedSgs.map(sg => (
+                                  <span
+                                    key={sg}
+                                    title={sg}
+                                    className="text-[9px] font-mono font-medium px-1.5 py-0.2 rounded bg-amber-400/10 text-amber-300 border border-amber-400/25 truncate max-w-[100px]"
+                                  >
+                                    {sg}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         {/* Tablet Controls */}
                         {isTabletAdmin && (
                           <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              title="Gestionar oficios/subgrupos de este seminarista"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setManagingModal({ type: 'MEMBER', coordKey: def.key, semId: m.id });
+                              }}
+                              className={`p-1 rounded-lg border transition-colors ${
+                                assignedSgs.length > 0
+                                  ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 hover:bg-amber-500/30'
+                                  : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-sky-300 hover:border-sky-500/40'
+                              }`}
+                            >
+                              <Tag className="w-3 h-3" />
+                            </button>
                             <button
                               title={isAreaHead ? 'Coordinador de Área' : 'Designar Coordinador de esta área'}
                               onClick={(e) => {
@@ -562,6 +654,130 @@ export default function Board4Coord({
           );
         })}
       </div>
+
+      {/* Subgroups Management Modal */}
+      <AnimatePresence>
+        {managingModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              className="w-full max-w-lg card-senior-gold rounded-3xl p-5 sm:p-6 shadow-2xl border border-amber-400/40 space-y-4"
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between pb-3 border-b border-white/[0.08]">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-amber-400" />
+                    <h3 className="text-base sm:text-lg font-serif font-black text-white">
+                      {managingModal.type === 'MEMBER' 
+                        ? `Oficios de ${seminaristas.find(s => s.id === managingModal.semId)?.nombre}`
+                        : `Oficios y Subgrupos de ${COORDINATION_DEFS[managingModal.coordKey]?.title}`}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    {managingModal.type === 'MEMBER'
+                      ? `Marca los oficios que desempeñará en ${COORDINATION_DEFS[managingModal.coordKey]?.title} (puede tener varios).`
+                      : `Administra la lista de tareas específicas para esta coordinación.`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => { setManagingModal(null); setNewSubgroupInput(''); }}
+                  className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/[0.1] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Subgroups Chips */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
+                  {managingModal.type === 'MEMBER' ? 'Seleccionar Oficios Activos (Toca para tildar)' : 'Subgrupos Disponibles'}
+                </label>
+                <div className="flex flex-wrap gap-2 max-h-[190px] overflow-y-auto custom-scrollbar p-1">
+                  {(subgroups[managingModal.coordKey] || []).length === 0 ? (
+                    <span className="text-xs text-slate-400 italic">No hay subgrupos definidos en esta área aún.</span>
+                  ) : (
+                    (subgroups[managingModal.coordKey] || []).map(sg => {
+                      const isSelected = managingModal.type === 'MEMBER' 
+                        ? (memberSubgroups[managingModal.semId] || []).includes(sg)
+                        : false;
+
+                      return (
+                        <div
+                          key={sg}
+                          className={`group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                            isSelected
+                              ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 border-amber-300 shadow-md font-bold'
+                              : 'bg-[#050817] text-slate-200 border-white/[0.12] hover:border-amber-400/50 hover:bg-slate-900'
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (managingModal.type === 'MEMBER') {
+                                handleToggleSubgroup(managingModal.semId, sg);
+                              }
+                            }}
+                            className="flex items-center gap-1.5 cursor-pointer"
+                          >
+                            {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            <span>{sg}</span>
+                          </button>
+                          <button
+                            type="button"
+                            title={`Eliminar "${sg}"`}
+                            onClick={() => handleRemoveSubgroup(managingModal.coordKey, sg)}
+                            className="text-slate-400 hover:text-rose-400 ml-1 opacity-50 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Add new subgroup inline */}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddSubgroup(managingModal.coordKey);
+                }}
+                className="pt-2 border-t border-white/[0.08] flex items-center gap-2"
+              >
+                <input
+                  type="text"
+                  placeholder="Nuevo oficio o comisión (ej. Sonido, Protocolo)..."
+                  value={newSubgroupInput}
+                  onChange={(e) => setNewSubgroupInput(e.target.value)}
+                  className="flex-1 h-9 px-3 bg-[#040714] border border-white/[0.15] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                />
+                <button
+                  type="submit"
+                  disabled={!newSubgroupInput.trim()}
+                  className="h-9 px-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Agregar</span>
+                </button>
+              </form>
+
+              {/* Modal Footer */}
+              <div className="pt-2 flex justify-end">
+                <button
+                  onClick={() => { setManagingModal(null); setNewSubgroupInput(''); }}
+                  className="btn-gold-senior py-2 px-6 rounded-xl text-xs font-bold shadow-md cursor-pointer"
+                >
+                  Guardar y Cerrar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

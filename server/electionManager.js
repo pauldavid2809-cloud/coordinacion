@@ -63,6 +63,39 @@ export class ElectionManager {
         cocina: null,
         servicios_generales: null
       },
+      subgroups: {
+        servicios_generales: [
+          'Limpieza',
+          'Lavandería',
+          'Jardinería',
+          'Mantenimiento',
+          'Hospedería',
+          'Campana'
+        ],
+        liturgia: [
+          'Capilla de Teología',
+          'Capilla de Filosofía',
+          'Sacristán Mayor',
+          'Sacristán Menor',
+          'Depósito',
+          'Mantelería'
+        ],
+        cultura: [
+          'Biblioteca',
+          'Redes Sociales',
+          'Deporte',
+          'Acto Cívico',
+          'Películas',
+          'Juegos y Recreación'
+        ],
+        cocina: [
+          'Despensa',
+          'Meriendas',
+          'Subcoordinador',
+          'Sala de Padres'
+        ]
+      },
+      memberSubgroups: {},
       suspenseTriggeredAt: null
     };
   }
@@ -125,6 +158,8 @@ export class ElectionManager {
       winner: this.state.winner,
       coordinations: this.state.coordinations,
       coordinators: this.state.coordinators,
+      subgroups: this.state.subgroups || {},
+      memberSubgroups: this.state.memberSubgroups || {},
       suspenseTriggeredAt: this.state.suspenseTriggeredAt,
       // Results summary (only visible when in RESULTS or COORDINATIONS state)
       resultsR1: ['ROUND_1_RESULTS', 'ROUND_2_VOTING', 'ROUND_2_SUSPENSE', 'ROUND_2_RESULTS', 'COORDINATIONS', 'FINISHED'].includes(this.state.status)
@@ -402,13 +437,22 @@ export class ElectionManager {
       return { error: 'Coordinación inválida' };
     }
 
+    let prevCoord = null;
     // Remove from all coordinations first
     validCoords.forEach(key => {
+      if (this.state.coordinations[key]?.includes(seminaristaId)) {
+        prevCoord = key;
+      }
       this.state.coordinations[key] = this.state.coordinations[key].filter(id => id !== seminaristaId);
       if (this.state.coordinators[key] === seminaristaId) {
         this.state.coordinators[key] = null;
       }
     });
+
+    if (prevCoord !== coordinationKey) {
+      if (!this.state.memberSubgroups) this.state.memberSubgroups = {};
+      this.state.memberSubgroups[seminaristaId] = [];
+    }
 
     // If assigning to a specific coordination
     if (coordinationKey !== 'unassigned') {
@@ -431,6 +475,44 @@ export class ElectionManager {
     this.state.coordinators[coordinationKey] = seminaristaId;
     this.broadcastState();
     return { success: true };
+  }
+
+  toggleMemberSubgroup(seminaristaId, subgroupName) {
+    if (!this.state.memberSubgroups) this.state.memberSubgroups = {};
+    const current = [...(this.state.memberSubgroups[seminaristaId] || [])];
+    if (current.includes(subgroupName)) {
+      this.state.memberSubgroups[seminaristaId] = current.filter(s => s !== subgroupName);
+    } else {
+      this.state.memberSubgroups[seminaristaId] = [...current, subgroupName];
+    }
+    this.broadcastState();
+    return { success: true, memberSubgroups: this.state.memberSubgroups };
+  }
+
+  addSubgroup(coordinationKey, subgroupName) {
+    const trimmed = (subgroupName || '').trim();
+    if (!trimmed) return { error: 'Nombre de subgrupo no válido' };
+    if (!this.state.subgroups) this.state.subgroups = {};
+    const current = [...(this.state.subgroups[coordinationKey] || [])];
+    if (!current.includes(trimmed)) {
+      this.state.subgroups[coordinationKey] = [...current, trimmed];
+    }
+    this.broadcastState();
+    return { success: true, subgroups: this.state.subgroups };
+  }
+
+  removeSubgroup(coordinationKey, subgroupName) {
+    if (!this.state.subgroups) return { success: true };
+    this.state.subgroups[coordinationKey] = (this.state.subgroups[coordinationKey] || []).filter(s => s !== subgroupName);
+    if (this.state.memberSubgroups) {
+      Object.keys(this.state.memberSubgroups).forEach(id => {
+        if (this.state.memberSubgroups[id]?.includes(subgroupName)) {
+          this.state.memberSubgroups[id] = this.state.memberSubgroups[id].filter(s => s !== subgroupName);
+        }
+      });
+    }
+    this.broadcastState();
+    return { success: true, subgroups: this.state.subgroups, memberSubgroups: this.state.memberSubgroups };
   }
 
   resetElection() {

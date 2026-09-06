@@ -170,6 +170,21 @@ io.on('connection', (socket) => {
     if (callback) callback(res);
   });
 
+  socket.on('coordination:toggle_subgroup', ({ seminaristaId, subgroupName }, callback) => {
+    const res = electionManager.toggleMemberSubgroup(seminaristaId, subgroupName);
+    if (callback) callback(res);
+  });
+
+  socket.on('coordination:add_subgroup', ({ coordinationKey, subgroupName }, callback) => {
+    const res = electionManager.addSubgroup(coordinationKey, subgroupName);
+    if (callback) callback(res);
+  });
+
+  socket.on('coordination:remove_subgroup', ({ coordinationKey, subgroupName }, callback) => {
+    const res = electionManager.removeSubgroup(coordinationKey, subgroupName);
+    if (callback) callback(res);
+  });
+
   socket.on('election:reset', (callback) => {
     const res = electionManager.resetElection();
     if (callback) callback(res);

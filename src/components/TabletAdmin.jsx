@@ -254,12 +254,14 @@ export default function TabletAdmin({ state, seminaristas = [], onUpdateState })
               {isConnected ? (
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden sm:inline">En Línea</span>
+                  <span className="hidden sm:inline">En Línea (Local)</span>
+                  <span className="sm:hidden">Local</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-rose-950/90 border border-rose-500/60 text-rose-300 text-[10px] font-mono font-bold shadow-sm animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                  <span>Desconectado</span>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-sky-950/80 border border-sky-500/40 text-sky-300 text-[10px] font-mono font-bold shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+                  <span className="hidden sm:inline">En Línea (Nube)</span>
+                  <span className="sm:hidden">Nube</span>
                 </span>
               )}
             </div>
@@ -404,9 +406,9 @@ export default function TabletAdmin({ state, seminaristas = [], onUpdateState })
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={handleStartRound1}
-                  disabled={candidates.length < 2 || isStartingRound1 || !isConnected}
+                  disabled={candidates.length < 2 || isStartingRound1}
                   className={`w-full py-3.5 rounded-2xl text-base flex items-center justify-center gap-2.5 shadow-xl transition-all ${
-                    candidates.length >= 2 && isConnected && !isStartingRound1
+                    candidates.length >= 2 && !isStartingRound1
                       ? 'btn-gold-senior cursor-pointer'
                       : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
                   }`}

@@ -69,5 +69,38 @@
     "cocina": null,
     "servicios_generales": null
   },
+  "subgroups": {
+    "servicios_generales": [
+      "Limpieza",
+      "Lavandería",
+      "Jardinería",
+      "Mantenimiento",
+      "Hospedería",
+      "Campana"
+    ],
+    "liturgia": [
+      "Capilla de Teología",
+      "Capilla de Filosofía",
+      "Sacristán Mayor",
+      "Sacristán Menor",
+      "Depósito",
+      "Mantelería"
+    ],
+    "cultura": [
+      "Biblioteca",
+      "Redes Sociales",
+      "Deporte",
+      "Acto Cívico",
+      "Películas",
+      "Juegos y Recreación"
+    ],
+    "cocina": [
+      "Despensa",
+      "Meriendas",
+      "Subcoordinador",
+      "Sala de Padres"
+    ]
+  },
+  "memberSubgroups": {},
   "suspenseTriggeredAt": null
 }

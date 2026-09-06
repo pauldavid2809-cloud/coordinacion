@@ -12,6 +12,39 @@ export const ALL_COURSES = [
   '4° de Teología'
 ];
 
+export const DEFAULT_SUBGROUPS = {
+  servicios_generales: [
+    'Limpieza',
+    'Lavandería',
+    'Jardinería',
+    'Mantenimiento',
+    'Hospedería',
+    'Campana'
+  ],
+  liturgia: [
+    'Capilla de Teología',
+    'Capilla de Filosofía',
+    'Sacristán Mayor',
+    'Sacristán Menor',
+    'Depósito',
+    'Mantelería'
+  ],
+  cultura: [
+    'Biblioteca',
+    'Redes Sociales',
+    'Deporte',
+    'Acto Cívico',
+    'Películas',
+    'Juegos y Recreación'
+  ],
+  cocina: [
+    'Despensa',
+    'Meriendas',
+    'Subcoordinador',
+    'Sala de Padres'
+  ]
+};
+
 export function calculateResults(votesMap = {}, candidatesList = []) {
   const totalVotes = Object.keys(votesMap).length;
   const tally = {};
@@ -73,6 +106,8 @@ export function broadcastStateChange(newState, onUpdateState) {
         winner: newState.winner || null,
         coordinations: newState.coordinations || {},
         coordinators: newState.coordinators || {},
+        subgroups: newState.subgroups || DEFAULT_SUBGROUPS,
+        member_subgroups: newState.memberSubgroups || {},
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' })
     ).catch(() => {});
@@ -117,6 +152,8 @@ export async function resetElection(seminaristas = [], onUpdateState) {
       cocina: null,
       servicios_generales: null
     },
+    subgroups: DEFAULT_SUBGROUPS,
+    memberSubgroups: {},
     suspenseTriggeredAt: null,
     r1VoteCount: 0,
     r2VoteCount: 0,
@@ -380,11 +417,20 @@ export function assignCoordinationInState(state, seminaristaId, coordinationKey,
   const validCoords = ['liturgia', 'cultura', 'cocina', 'servicios_generales'];
   const coordinations = { ...(state.coordinations || { liturgia: [], cultura: [], cocina: [], servicios_generales: [] }) };
   const coordinators = { ...(state.coordinators || { liturgia: null, cultura: null, cocina: null, servicios_generales: null }) };
+  const memberSubgroups = { ...(state.memberSubgroups || {}) };
 
+  let prevCoord = null;
   validCoords.forEach(key => {
+    if ((coordinations[key] || []).includes(seminaristaId)) {
+      prevCoord = key;
+    }
     coordinations[key] = (coordinations[key] || []).filter(id => id !== seminaristaId);
     if (coordinators[key] === seminaristaId) coordinators[key] = null;
   });
+
+  if (prevCoord !== coordinationKey) {
+    memberSubgroups[seminaristaId] = [];
+  }
 
   if (validCoords.includes(coordinationKey)) {
     coordinations[coordinationKey] = [...coordinations[coordinationKey], seminaristaId];
@@ -393,7 +439,8 @@ export function assignCoordinationInState(state, seminaristaId, coordinationKey,
   const newState = {
     ...state,
     coordinations,
-    coordinators
+    coordinators,
+    memberSubgroups
   };
 
   broadcastStateChange(newState, onUpdateState);
@@ -455,6 +502,78 @@ export function castVoteInState(state, { voterId, candidateId, round }, onUpdate
     r2VoteCount: r2VotedIds.length,
     r1VotedIds,
     r2VotedIds
+  };
+
+  broadcastStateChange(newState, onUpdateState);
+  return newState;
+}
+
+export function toggleMemberSubgroupInState(state, seminaristaId, subgroupName, onUpdateState) {
+  if (socket.connected) {
+    socket.emit('coordination:toggle_subgroup', { seminaristaId, subgroupName });
+  }
+
+  const memberSubgroups = { ...(state.memberSubgroups || {}) };
+  const current = [...(memberSubgroups[seminaristaId] || [])];
+
+  if (current.includes(subgroupName)) {
+    memberSubgroups[seminaristaId] = current.filter(s => s !== subgroupName);
+  } else {
+    memberSubgroups[seminaristaId] = [...current, subgroupName];
+  }
+
+  const newState = {
+    ...state,
+    memberSubgroups
+  };
+
+  broadcastStateChange(newState, onUpdateState);
+  return newState;
+}
+
+export function addSubgroupInState(state, coordinationKey, subgroupName, onUpdateState) {
+  const trimmed = (subgroupName || '').trim();
+  if (!trimmed) return state;
+
+  if (socket.connected) {
+    socket.emit('coordination:add_subgroup', { coordinationKey, subgroupName: trimmed });
+  }
+
+  const subgroups = { ...(state.subgroups || DEFAULT_SUBGROUPS) };
+  const currentList = [...(subgroups[coordinationKey] || [])];
+
+  if (!currentList.includes(trimmed)) {
+    subgroups[coordinationKey] = [...currentList, trimmed];
+  }
+
+  const newState = {
+    ...state,
+    subgroups
+  };
+
+  broadcastStateChange(newState, onUpdateState);
+  return newState;
+}
+
+export function removeSubgroupInState(state, coordinationKey, subgroupName, onUpdateState) {
+  if (socket.connected) {
+    socket.emit('coordination:remove_subgroup', { coordinationKey, subgroupName });
+  }
+
+  const subgroups = { ...(state.subgroups || DEFAULT_SUBGROUPS) };
+  subgroups[coordinationKey] = (subgroups[coordinationKey] || []).filter(s => s !== subgroupName);
+
+  const memberSubgroups = { ...(state.memberSubgroups || {}) };
+  Object.keys(memberSubgroups).forEach(semId => {
+    if (memberSubgroups[semId]?.includes(subgroupName)) {
+      memberSubgroups[semId] = memberSubgroups[semId].filter(s => s !== subgroupName);
+    }
+  });
+
+  const newState = {
+    ...state,
+    subgroups,
+    memberSubgroups
   };
 
   broadcastStateChange(newState, onUpdateState);

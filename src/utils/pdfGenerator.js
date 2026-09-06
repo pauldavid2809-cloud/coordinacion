@@ -141,6 +141,7 @@ export async function generateOrdenDeLaCasaPDF({ state, seminaristas = [] }) {
   // ==========================================
   const coordinations = state?.coordinations || {};
   const coordinators = state?.coordinators || {};
+  const memberSubgroups = state?.memberSubgroups || {};
 
   const colWidth = 88; // mm cada columna
   const colGap = 6;    // mm separación
@@ -266,6 +267,21 @@ export async function generateOrdenDeLaCasaPDF({ state, seminaristas = [] }) {
         const bullet = `${idx + 1}.`;
         doc.text(bullet, cardX + 4, memberY);
         doc.text(m.nombre, cardX + 8, memberY);
+
+        // Subgrupos asignados si los tiene
+        const sgs = memberSubgroups[m.id] || [];
+        if (sgs.length > 0) {
+          const nameW = doc.getTextWidth(m.nombre);
+          doc.setFont('helvetica', 'italic');
+          doc.setFontSize(5.8);
+          doc.setTextColor(146, 64, 14); // Amber 800
+          const maxSgW = colWidth - 8 - nameW - 20; // espacio libre antes del curso
+          let sgStr = `(${sgs.join(', ')})`;
+          if (doc.getTextWidth(sgStr) > maxSgW && sgs.length > 1) {
+            sgStr = `(${sgs[0]}, +${sgs.length - 1})`;
+          }
+          doc.text(sgStr, cardX + 8 + nameW + 1.5, memberY);
+        }
 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(6.5);
