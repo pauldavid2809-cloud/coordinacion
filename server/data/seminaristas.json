@@ -1,0 +1,46 @@
+[
+  { "id": "sem-1", "nombre": "Ángel Báez", "nombreCompleto": "BÁEZ CARIDAD, Ángel David", "cedula": "V-33.124.925", "telefono": "0422-6755714", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-2", "nombre": "José Bermúdez", "nombreCompleto": "BERMÚDEZ SUÁREZ, José Enrique", "cedula": "V-32.577.396", "telefono": "0412-4250224", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-3", "nombre": "Edwin Bermúdez", "nombreCompleto": "BERMÚDEZ URDANETA, Edwin Javier", "cedula": "V-32.551.085", "telefono": "0412-6989201", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-4", "nombre": "Lisandro Castellano", "nombreCompleto": "CASTELLANO FINOL, Lisandro Alberto", "cedula": "V-30.274.453", "telefono": "0424-6065923", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-5", "nombre": "Roberth García", "nombreCompleto": "GARCÍA MARÍN, Roberth David", "cedula": "V-32.967.515", "telefono": "0424-6576662", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-6", "nombre": "Isaac Pérez", "nombreCompleto": "PÉREZ RAMOS, Isaac David", "cedula": "V-31.818.380", "telefono": "0424-6633777", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-7", "nombre": "Samuel Pérez", "nombreCompleto": "PÉREZ RAMOS, Samuel de Jesús", "cedula": "V-33.036.016", "telefono": "0412-5131419", "curso": "1° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+
+  { "id": "sem-8", "nombre": "Alfenyer Fernández", "nombreCompleto": "FERNÁNDEZ LUZARDO, Alfenyer Alfonso", "cedula": "V-27.744.874", "telefono": "0424-6287918", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-9", "nombre": "Gregory García", "nombreCompleto": "GARCÍA HERNÁNDEZ, Gregory José", "cedula": "V-29.950.931", "telefono": "0424-6989382", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-10", "nombre": "Ranses Mercado", "nombreCompleto": "MERCADO OSORIO, Ranses Isaac", "cedula": "V-29.646.693", "telefono": "0412-7017059", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-11", "nombre": "Luis Polanco", "nombreCompleto": "POLANCO FERNÁNDEZ, Luis Carlos", "cedula": "V-32.567.447", "telefono": "0412-9195877", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-12", "nombre": "Alejandro Rubio", "nombreCompleto": "RUBIO MEDINA, Alejandro Moisés", "cedula": "V-29.539.180", "telefono": "0412-1052372", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-13", "nombre": "Yorvi Sierra", "nombreCompleto": "SIERRA LÓPEZ, Yorvi José", "cedula": "V-26.541.702", "telefono": "0412-0698387", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-14", "nombre": "José Miguel Sierra", "nombreCompleto": "SIERRA NAVA, José Miguel", "cedula": "V-33.597.365", "telefono": "0424-6328714", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-15", "nombre": "Osmán Vargas", "nombreCompleto": "VARGAS QUINTERO, Osmán José", "cedula": "V-31.055.024", "telefono": "0412-7330508", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-16", "nombre": "Julio Yajure", "nombreCompleto": "YAJURE SÁNCHEZ, Julio César", "cedula": "V-30.573.428", "telefono": "0412-6713820", "curso": "2° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+
+  { "id": "sem-17", "nombre": "José Castillo", "nombreCompleto": "CASTILLO PIRELA, José Eloy", "cedula": "V-25.788.670", "telefono": "0424-6929917", "curso": "3° de Filosofía", "etapa": "Filosofía", "diocesis": "Cabimas", "foto": null },
+  { "id": "sem-18", "nombre": "Jorge Reyes", "nombreCompleto": "REYES GUTIÉRREZ, Jorge Luis", "cedula": "V-29.818.694", "telefono": "0412-3798878", "curso": "3° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-19", "nombre": "Mario Soto", "nombreCompleto": "SOTO VILLASMIL, Mario José", "cedula": "V-29.816.083", "telefono": "0414-6040830", "curso": "3° de Filosofía", "etapa": "Filosofía", "diocesis": "Maracaibo", "foto": null },
+
+  { "id": "sem-20", "nombre": "José Acosta", "nombreCompleto": "ACOSTA BASABE, José Francisco", "cedula": "V-30.929.782", "telefono": "0414-6062204", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-21", "nombre": "Dany Araujo", "nombreCompleto": "ARAUJO GUÉDEZ, Dany Rafael", "cedula": "V-16.687.898", "telefono": "0424-6058254", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-22", "nombre": "Luis Benítez", "nombreCompleto": "BENÍTEZ MORÁN, Luis Ángel", "cedula": "V-18.576.312", "telefono": "0412-2587049", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-23", "nombre": "Yorvi Chirino", "nombreCompleto": "CHIRINO REYES, Yorvi Ernesto", "cedula": "V-29.871.650", "telefono": "0412-1235069", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Coro", "foto": null },
+  { "id": "sem-24", "nombre": "Juan Higuera", "nombreCompleto": "HIGUERA JIMÉNEZ, Juan Francisco", "cedula": "V-30.892.603", "telefono": "0424-6596995", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Coro", "foto": null },
+  { "id": "sem-25", "nombre": "David Paz", "nombreCompleto": "PAZ BENAVIDES, David Armando", "cedula": "V-26.860.215", "telefono": "0422-7649931", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-26", "nombre": "Yorby Suárez", "nombreCompleto": "SUÁREZ SUÁREZ, Yorby Javier", "cedula": "V-24.909.124", "telefono": "0416-1454342", "curso": "1° de Teología", "etapa": "Teología", "diocesis": "Cabimas", "foto": null },
+
+  { "id": "sem-27", "nombre": "Jossue Hernández", "nombreCompleto": "HERNÁNDEZ MIQUILENA, Jossue Alejandro", "cedula": "V-28.743.500", "telefono": "0412-0326057", "curso": "2° de Teología", "etapa": "Teología", "diocesis": "Coro", "foto": null },
+  { "id": "sem-28", "nombre": "Cesar Petit", "nombreCompleto": "PETIT HANSEN, Cesar David", "cedula": "V-30.948.771", "telefono": "0424-6176664", "curso": "2° de Teología", "etapa": "Teología", "diocesis": "Coro", "foto": null },
+
+  { "id": "sem-29", "nombre": "Andrés Araviche", "nombreCompleto": "ARAVICHE CHIQUITO, Andrés Alfonso", "cedula": "V-30.412.472", "telefono": "0424-6526384", "curso": "3° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-30", "nombre": "Nixon Torrealba", "nombreCompleto": "TORREALBA GARCÍA, Nixon Luis", "cedula": "V-28.509.786", "telefono": "0412-6600977", "curso": "3° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+
+  { "id": "sem-31", "nombre": "Rixio García", "nombreCompleto": "GARCÍA MONTILLA, Rixio Ramón", "cedula": "V-13.950.483", "telefono": "0414-6237673", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-32", "nombre": "Ricardo Márquez", "nombreCompleto": "MÁRQUEZ COLINA, Ricardo Andrés", "cedula": "V-25.906.935", "telefono": "0414-6237673", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-33", "nombre": "Ricardo Morillo", "nombreCompleto": "MORILLO MEDINA, Ricardo José", "cedula": "V-26.025.655", "telefono": "0414-3686447", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Cabimas", "foto": null },
+  { "id": "sem-34", "nombre": "Jesús Ochoa", "nombreCompleto": "OCHOA BETIN, Jesús Javier", "cedula": "V-22.149.652", "telefono": "0426-1634973", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-35", "nombre": "Víctor Suárez", "nombreCompleto": "SUÁREZ QUINTERO, Víctor Julio", "cedula": "V-24.910.923", "telefono": "0414-6297214", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Cabimas", "foto": null },
+  { "id": "sem-36", "nombre": "Jesús Tudares", "nombreCompleto": "TUDARES LABARCA, Jesús David", "cedula": "V-30.200.757", "telefono": "0412-7647587", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-37", "nombre": "Paúl Urdaneta", "nombreCompleto": "URDANETA BERRUETA, Paúl David", "cedula": "V-30.413.000", "telefono": "0414-6164561", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null },
+  { "id": "sem-38", "nombre": "Jorge Villalobos", "nombreCompleto": "VILLALOBOS GONZÁLEZ, Jorge Luis", "cedula": "V-26.639.320", "telefono": "0412-6933938", "curso": "4° de Teología", "etapa": "Teología", "diocesis": "Maracaibo", "foto": null }
+]

@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body {
+    @apply bg-[#040714] text-slate-100 antialiased font-sans min-h-[100dvh];
+    background-color: #040714;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(251, 191, 36, 0.18), transparent 70%),
+      radial-gradient(circle at 10% 25%, rgba(37, 99, 235, 0.15), transparent 45%),
+      radial-gradient(circle at 90% 75%, rgba(139, 92, 246, 0.12), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.08), transparent 50%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+}
+
+/* Senior Craft: Glass Surfaces with Specular Light */
+.card-senior {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.75) 0%, rgba(7, 12, 27, 0.9) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.card-senior-gold {
+  background: linear-gradient(180deg, rgba(26, 32, 58, 0.85) 0%, rgba(11, 15, 30, 0.95) 100%);
+  border-top: 1px solid rgba(254, 240, 138, 0.45);
+  border-left: 1px solid rgba(245, 158, 11, 0.25);
+  border-right: 1px solid rgba(245, 158, 11, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.9),
+    0 0 35px -5px rgba(245, 158, 11, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Radiant Gold Text */
+.gold-heading {
+  background: linear-gradient(135deg, #FFFDF5 0%, #FEF08A 25%, #FBBF24 55%, #F59E0B 80%, #B45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+}
+
+/* Emil-style tactile button feedback */
+.btn-senior {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1), filter 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.btn-senior:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.btn-senior:active {
+  transform: scale(0.97);
+}
+
+/* Golden luxury button */
+.btn-gold-senior {
+  background: linear-gradient(180deg, #FDE047 0%, #F59E0B 50%, #D97706 100%);
+  color: #030712;
+  font-weight: 800;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 10px 25px -5px rgba(245, 158, 11, 0.5),
+    0 0 0 1px rgba(217, 119, 6, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1), filter 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.btn-gold-senior:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 14px 30px -5px rgba(245, 158, 11, 0.65),
+    0 0 20px rgba(245, 158, 11, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.btn-gold-senior:active {
+  transform: scale(0.97);
+}
+
+/* Cathedral Ambient Spotlight Sweep */
+.spotlight-cathedral {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.22) 0%, rgba(59, 130, 246, 0.08) 35%, transparent 70%);
+  pointer-events: none;
+  filter: blur(50px);
+  z-index: 0;
+}
+
+/* Cardiac Suspense Pulse Animation */
+@keyframes heartPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4)); }
+  15% { transform: scale(1.15); filter: drop-shadow(0 0 35px rgba(245, 158, 11, 0.9)); }
+  30% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4)); }
+  45% { transform: scale(1.18); filter: drop-shadow(0 0 45px rgba(245, 158, 11, 1)); }
+  70% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4)); }
+}
+.animate-heart-pulse {
+  animation: heartPulse 1.1s infinite cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Rotating Golden Aura */
+@keyframes auraRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-aura-slow {
+  animation: auraRotate 25s linear infinite;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(4, 7, 20, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.6) 0%, rgba(217, 119, 6, 0.4) 100%);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.9);
+}

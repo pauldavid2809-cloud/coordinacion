@@ -1,0 +1,100 @@
+{
+  "status": "COORDINATIONS",
+  "eligibleCourses": [
+    "2° de Teología",
+    "3° de Teología"
+  ],
+  "votingCourses": [
+    "1° de Filosofía",
+    "2° de Filosofía",
+    "3° de Filosofía",
+    "1° de Teología",
+    "2° de Teología",
+    "3° de Teología",
+    "4° de Teología"
+  ],
+  "candidates": [
+    {
+      "id": "sem-27",
+      "nombre": "Jossue Hernández",
+      "curso": "2° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0
+    },
+    {
+      "id": "sem-28",
+      "nombre": "Cesar Petit",
+      "curso": "2° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0
+    },
+    {
+      "id": "sem-29",
+      "nombre": "Andrés Araviche",
+      "curso": "3° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0
+    },
+    {
+      "id": "sem-30",
+      "nombre": "Nixon Torrealba",
+      "curso": "3° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0
+    }
+  ],
+  "round1Votes": {},
+  "round2Votes": {},
+  "runoffCandidates": [
+    {
+      "id": "sem-27",
+      "nombre": "Jossue Hernández",
+      "curso": "2° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0,
+      "votes": 0,
+      "percentage": 0,
+      "isWinner34": false
+    },
+    {
+      "id": "sem-28",
+      "nombre": "Cesar Petit",
+      "curso": "2° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0,
+      "votes": 0,
+      "percentage": 0,
+      "isWinner34": false
+    }
+  ],
+  "winner": {
+    "id": "sem-27",
+    "nombre": "Jossue Hernández",
+    "curso": "2° de Teología",
+    "foto": null,
+    "votosR1": 0,
+    "votosR2": 0,
+    "votes": 0,
+    "percentage": 0,
+    "isWinner34": false
+  },
+  "coordinations": {
+    "liturgia": [],
+    "cultura": [],
+    "cocina": [],
+    "servicios_generales": []
+  },
+  "coordinators": {
+    "liturgia": null,
+    "cultura": null,
+    "cocina": null,
+    "servicios_generales": null
+  },
+  "suspenseTriggeredAt": 1788666631976
+}
