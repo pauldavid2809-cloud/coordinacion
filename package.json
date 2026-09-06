@@ -9,9 +9,13 @@
     "preview": "vite preview",
     "server": "node server/index.js",
     "start": "node server/index.js",
-    "db:push": "node server/syncToSupabase.js"
+    "db:push": "node server/syncToSupabase.js",
+    "video:preview": "remotion preview src/remotion/Root.jsx",
+    "video:render": "remotion render src/remotion/Root.jsx GuiaVotacion out/guia_votacion_whatsapp.mp4"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.521",
+    "@remotion/player": "^4.0.521",
     "@supabase/supabase-js": "^2.115.0",
     "canvas-confetti": "^1.9.4",
     "cors": "^2.8.5",
@@ -24,6 +28,7 @@
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "remotion": "^4.0.521",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"
   },

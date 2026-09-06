@@ -8,7 +8,8 @@ import HeaderBanner from './components/HeaderBanner';
 import TVView from './components/TVView';
 import TabletAdmin from './components/TabletAdmin';
 import VoterMobile from './components/VoterMobile';
-import { Tv, Tablet, Smartphone, Sparkles, ExternalLink, Wifi, Shield } from 'lucide-react';
+import VideoPlayerView from './components/VideoPlayerView';
+import { Tv, Tablet, Smartphone, Sparkles, ExternalLink, Wifi, Shield, Film } from 'lucide-react';
 
 export default function App() {
   const [electionState, setElectionState] = useState(() => {
@@ -192,6 +193,7 @@ export default function App() {
   const isTV = currentPath === '/tv';
   const isAdmin = currentPath === '/admin' || currentPath === '/padre';
   const isVoter = currentPath === '/votar';
+  const isVideo = currentPath === '/video';
 
   const isLockedScreen = isTV || isAdmin;
 
@@ -200,7 +202,7 @@ export default function App() {
       {/* Top Banner - Omitted on TV and Admin for dedicated fullscreen ergonomics */}
       {!isLockedScreen && (
         <HeaderBanner 
-          role={isVoter ? 'voter' : 'portal'} 
+          role={isVoter ? 'voter' : isVideo ? 'video' : 'portal'} 
           status={electionState?.status || 'CONFIG'} 
         />
       )}
@@ -261,15 +263,28 @@ export default function App() {
             </motion.div>
           )}
 
+          {isVideo && (
+            <motion.div
+              key="video"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex-1 flex flex-col"
+            >
+              <VideoPlayerView onBack={() => navigateTo('/')} />
+            </motion.div>
+          )}
+
           {/* Portal Home */}
-          {!isTV && !isAdmin && !isVoter && (
+          {!isTV && !isAdmin && !isVoter && !isVideo && (
             <motion.div
               key="portal"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              className="max-w-5xl mx-auto p-4 sm:p-10 my-auto text-center space-y-10"
+              className="max-w-6xl mx-auto p-4 sm:p-10 my-auto text-center space-y-10"
             >
               {/* Sacred Crest & Title */}
               <div className="space-y-4">
@@ -296,20 +311,20 @@ export default function App() {
               </div>
 
               {/* Roles Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
                 {/* TV */}
                 <motion.div
                   whileHover={{ y: -6, scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   onClick={() => navigateTo('/tv')}
-                  className="card-senior group p-7 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-amber-500/30"
+                  className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-amber-500/30"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <Tv className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Tv className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-amber-300 transition-colors">
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-amber-300 transition-colors">
                       Pantalla Televisor
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -328,13 +343,13 @@ export default function App() {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   onClick={() => navigateTo('/admin')}
-                  className="card-senior group p-7 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-sky-500/30"
+                  className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-sky-500/30"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-blue-500/15 border border-blue-400/40 text-sky-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <Tablet className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-400/40 text-sky-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Tablet className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-sky-300 transition-colors">
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-sky-300 transition-colors">
                       Tablet del Padre Rector
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -353,21 +368,46 @@ export default function App() {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                   onClick={() => navigateTo('/votar')}
-                  className="card-senior group p-7 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-emerald-500/30"
+                  className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-emerald-500/30"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <Smartphone className="w-8 h-8" />
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Smartphone className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-lg text-white group-hover:text-emerald-300 transition-colors">
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-emerald-300 transition-colors">
                       Móvil Seminarista
                     </h3>
                     <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Tarjetón secreto para los hermanos votantes: validación por Cédula de Identidad oficial.
+                      Tarjetón secreto para los hermanos votantes: validación por Cédula o Clave Maestra.
                     </p>
                   </div>
                   <div className="pt-2 text-xs font-mono font-bold text-emerald-400 inline-flex items-center gap-1.5">
                     <span>Ir a Votar</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </div>
+                </motion.div>
+
+                {/* WhatsApp Video Guide */}
+                <motion.div
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  onClick={() => navigateTo('/video')}
+                  className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-purple-500/30 bg-purple-950/10"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-400/40 text-purple-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Film className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-purple-300 transition-colors">
+                      Guía en Video
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                      Animación 9:16 para WhatsApp: paso a paso para votar, búsqueda sin tildes y clave maestra.
+                    </p>
+                  </div>
+                  <div className="pt-2 text-xs font-mono font-bold text-purple-400 inline-flex items-center gap-1.5">
+                    <span>Ver Video</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </div>
                 </motion.div>
