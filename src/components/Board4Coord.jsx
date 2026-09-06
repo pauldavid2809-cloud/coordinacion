@@ -91,11 +91,17 @@ export default function Board4Coord({
     ...coordinations.servicios_generales
   ]);
 
+  const normalizeStr = (str) =>
+    (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
   const unassignedSeminaristas = seminaristas.filter(s => {
     if (s.id === generalCoordinatorId) return false;
     if (assignedIds.has(s.id)) return false;
     if (filterCourse !== 'ALL' && s.curso !== filterCourse) return false;
-    if (searchPool && !s.nombre.toLowerCase().includes(searchPool.toLowerCase())) return false;
+    if (searchPool) {
+      const q = normalizeStr(searchPool);
+      if (!normalizeStr(s.nombre).includes(q)) return false;
+    }
     return true;
   });
 
