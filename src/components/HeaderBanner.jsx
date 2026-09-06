@@ -33,7 +33,7 @@ export default function HeaderBanner({ role = 'tv', status = 'CONFIG' }) {
         <div className="flex items-center gap-3.5">
           <div className="relative flex items-center justify-center">
             <img 
-              src="/logo.svg" 
+              src="/logo.png" 
               alt="Escudo Santo Tomás de Aquino" 
               className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.35)]"
             />

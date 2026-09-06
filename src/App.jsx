@@ -128,7 +128,7 @@ export default function App() {
                 <div className="relative inline-block">
                   <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-2xl animate-pulse"></div>
                   <img 
-                    src="/logo.svg" 
+                    src="/logo.png" 
                     alt="Escudo del Seminario" 
                     className="relative w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain drop-shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
                   />

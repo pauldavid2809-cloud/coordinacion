@@ -166,9 +166,11 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
       {/* Top Header - Compact single-row command strip */}
       <div className="flex items-center justify-between gap-3 card-senior-gold rounded-xl px-3.5 py-1.5 shrink-0 shadow-md border border-amber-400/40">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-sm shrink-0">
-            <Crown className="w-4 h-4" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="Escudo Santo Tomás de Aquino" 
+            className="w-8 h-8 object-contain drop-shadow-md shrink-0" 
+          />
           <div className="min-w-0">
             <h1 className="text-sm sm:text-base font-serif font-black text-white leading-tight truncate">
               Mando del Padre Rector

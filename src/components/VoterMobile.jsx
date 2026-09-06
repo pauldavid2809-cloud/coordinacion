@@ -198,6 +198,13 @@ export default function VoterMobile({ state, seminaristas = [] }) {
     <div className="max-w-md mx-auto p-4 sm:p-6 pb-24 space-y-6">
       {/* Title & Round Badge */}
       <div className="text-center space-y-2">
+        <div className="relative inline-block mb-1">
+          <img 
+            src="/logo.png" 
+            alt="Escudo Santo Tomás de Aquino" 
+            className="w-16 h-16 sm:w-20 sm:h-20 mx-auto object-contain drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]" 
+          />
+        </div>
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-950/90 border border-amber-400/30 text-amber-300 text-xs font-mono font-bold uppercase tracking-widest">
           <Vote className="w-4 h-4 text-amber-400" />
           <span>{isRound1 ? 'Primera Vuelta Electoral' : 'Segunda Vuelta • Balotaje'}</span>
