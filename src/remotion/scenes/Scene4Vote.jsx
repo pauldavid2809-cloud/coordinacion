@@ -462,7 +462,7 @@ export const Scene4Vote = () => {
               1ª Vuelta: 75%
             </div>
             <div style={{ fontSize: '18px', color: '#94A3B8', lineHeight: 1.3 }}>
-              Requiere 29 de 38 votos para consagración directa.
+              Requiere 29 de 38 votos para elección directa.
             </div>
           </div>
 
