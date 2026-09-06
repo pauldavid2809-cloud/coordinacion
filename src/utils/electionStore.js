@@ -130,7 +130,7 @@ export async function resetElection(seminaristas = [], onUpdateState) {
 
   if (supabase) {
     try {
-      await supabase.from('coord_votes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('coord_votes').delete().neq('voter_id', '__none__');
     } catch (e) {}
   }
 

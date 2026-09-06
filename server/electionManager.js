@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { syncStateToSupabase, recordVoteInSupabase, logAuditEvent } from './supabase.js';
+import { syncStateToSupabase, recordVoteInSupabase, logAuditEvent, supabase } from './supabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -437,6 +437,9 @@ export class ElectionManager {
     this.state = this.getInitialState();
     if (fs.existsSync(STATE_BACKUP_PATH)) {
       fs.unlinkSync(STATE_BACKUP_PATH);
+    }
+    if (supabase) {
+      supabase.from('coord_votes').delete().neq('voter_id', '__none__').catch(() => {});
     }
     this.broadcastState();
     return { success: true };
