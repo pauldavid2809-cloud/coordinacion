@@ -1,5 +1,5 @@
 {
-  "status": "ROUND_1_VOTING",
+  "status": "CONFIG",
   "eligibleCourses": [
     "2° de Teología",
     "3° de Teología"
@@ -15,6 +15,7 @@
   ],
   "selectedCandidateIds": [
     "sem-27",
+    "sem-28",
     "sem-29",
     "sem-30"
   ],
@@ -22,6 +23,14 @@
     {
       "id": "sem-27",
       "nombre": "Jossue Hernández",
+      "curso": "2° de Teología",
+      "foto": null,
+      "votosR1": 0,
+      "votosR2": 0
+    },
+    {
+      "id": "sem-28",
+      "nombre": "Cesar Petit",
       "curso": "2° de Teología",
       "foto": null,
       "votosR1": 0,
