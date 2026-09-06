@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
 import AvatarPlaceholder from './AvatarPlaceholder';
+import { generateOrdenDeLaCasaPDF } from '../utils/pdfGenerator';
 import { 
   Cross, 
   BookOpen, 
@@ -14,7 +15,8 @@ import {
   Users, 
   Layers,
   GripVertical,
-  ArrowDown
+  ArrowDown,
+  FileDown
 } from 'lucide-react';
 
 export const COORDINATION_DEFS = {
@@ -74,6 +76,20 @@ export default function Board4Coord({
   const [searchPool, setSearchPool] = useState('');
   const [draggedSemId, setDraggedSemId] = useState(null);
   const [dragOverZone, setDragOverZone] = useState(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    try {
+      setIsGeneratingPDF(true);
+      soundEffects.playClick();
+      await generateOrdenDeLaCasaPDF({ state, seminaristas });
+      soundEffects.playSuccess();
+    } catch (err) {
+      console.error('Error generando PDF:', err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   const coordinations = state?.coordinations || {
     liturgia: [],
@@ -208,6 +224,17 @@ export default function Board4Coord({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              title="Descargar Orden de la Casa en PDF oficial"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black transition-all shadow-sm"
+            >
+              <FileDown className="w-3.5 h-3.5" />
+              <span>{isGeneratingPDF ? 'Generando...' : 'Descargar PDF'}</span>
+            </motion.button>
+
             <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-300 bg-[#050817] px-3 py-1 rounded-lg border border-white/[0.08]">
               <Users className="w-3.5 h-3.5 text-amber-400" />
               <span>Asignados: <strong className="text-amber-300">{assignedIds.size}</strong> / <strong className="text-white">{seminaristas.length - 1}</strong></span>

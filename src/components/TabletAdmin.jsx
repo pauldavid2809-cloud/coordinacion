@@ -5,6 +5,7 @@ import { soundEffects } from '../utils/soundEffects';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import Board4Coord from './Board4Coord';
 import SuspenseReveal from './SuspenseReveal';
+import { generateOrdenDeLaCasaPDF } from '../utils/pdfGenerator';
 import { 
   Settings, 
   Play, 
@@ -21,7 +22,8 @@ import {
   Flame, 
   Layers,
   Maximize,
-  Minimize
+  Minimize,
+  FileDown
 } from 'lucide-react';
 
 const ALL_COURSES = [
@@ -39,7 +41,21 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedCandidateForUpload, setSelectedCandidateForUpload] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const fileInputRef = useRef(null);
+
+  const handleDownloadPDF = async () => {
+    try {
+      setIsGeneratingPDF(true);
+      soundEffects.playClick();
+      await generateOrdenDeLaCasaPDF({ state, seminaristas });
+      soundEffects.playSuccess();
+    } catch (err) {
+      console.error('Error generando PDF:', err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   useEffect(() => {
     const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -207,6 +223,17 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
               </button>
             ))}
           </div>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleDownloadPDF}
+            disabled={isGeneratingPDF}
+            title="Descargar Orden de la Casa Oficial en PDF"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black transition-all shadow-md"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{isGeneratingPDF ? 'Generando...' : 'Descargar PDF'}</span>
+          </motion.button>
 
           <button
             onClick={toggleFullscreen}
