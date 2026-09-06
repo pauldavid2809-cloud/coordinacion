@@ -38,6 +38,7 @@ export default function TVView({ state, seminaristas = [] }) {
 
   const status = state?.status || 'CONFIG';
   const candidates = state?.candidates || [];
+  const eligibleCourses = state?.eligibleCourses || ['2° de Teología', '3° de Teología'];
   const isRound1Voting = status === 'ROUND_1_VOTING';
   const isRound2Voting = status === 'ROUND_2_VOTING';
   const isSuspenseOrResults = status.includes('SUSPENSE') || status.includes('RESULTS');
@@ -297,12 +298,18 @@ export default function TVView({ state, seminaristas = [] }) {
                       Candidatos Elegibles a Coordinador General
                     </h2>
                   </div>
-                  <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-400">
-                    2° y 3° de Teología
+                  <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-amber-300">
+                    {eligibleCourses.join(' • ') || 'Cursos Seleccionados'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className={`grid gap-3 sm:gap-4 w-full ${
+                  candidates.length <= 2 
+                    ? 'grid-cols-2 max-w-xl mx-auto' 
+                    : candidates.length === 3 
+                    ? 'grid-cols-3 max-w-3xl mx-auto' 
+                    : 'grid-cols-2 sm:grid-cols-4'
+                }`}>
                   {candidates.map((cand) => (
                     <motion.div
                       key={cand.id}

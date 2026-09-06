@@ -125,6 +125,11 @@ io.on('connection', (socket) => {
     if (callback) callback(res);
   });
 
+  socket.on('election:toggle_candidate', ({ seminaristaId }, callback) => {
+    const res = electionManager.toggleCandidate(seminaristaId);
+    if (callback) callback(res);
+  });
+
   socket.on('election:start_round_1', (callback) => {
     const res = electionManager.startRound1();
     if (callback) callback(res);

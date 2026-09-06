@@ -30,12 +30,29 @@ export default function App() {
       .then(data => setNetworkInfo(data))
       .catch(err => console.error('Error fetching network info:', err));
 
-    socket.on('election:state', (newState) => {
+    fetch('/api/state')
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) setElectionState(data);
+      })
+      .catch(() => {});
+
+    const handleState = (newState) => {
       setElectionState(newState);
+    };
+
+    socket.on('election:state', handleState);
+    socket.on('connect', () => {
+      socket.emit('election:get_state');
     });
 
+    if (socket.connected) {
+      socket.emit('election:get_state');
+    }
+
     return () => {
-      socket.off('election:state');
+      socket.off('election:state', handleState);
+      socket.off('connect');
     };
   }, []);
 

@@ -29,21 +29,23 @@ export class ElectionManager {
       '4° de Teología'
     ];
 
-    const candidates = this.seminaristas
-      .filter(s => defaultEligibleCourses.includes(s.curso))
-      .map(s => ({
-        id: s.id,
-        nombre: s.nombre,
-        curso: s.curso,
-        foto: s.foto || null,
-        votosR1: 0,
-        votosR2: 0
-      }));
+    const candidateSeminaristas = this.seminaristas.filter(s => defaultEligibleCourses.includes(s.curso));
+    const selectedCandidateIds = candidateSeminaristas.map(s => s.id);
+
+    const candidates = candidateSeminaristas.map(s => ({
+      id: s.id,
+      nombre: s.nombre,
+      curso: s.curso,
+      foto: s.foto || null,
+      votosR1: 0,
+      votosR2: 0
+    }));
 
     return {
       status: 'CONFIG', // CONFIG, ROUND_1_VOTING, ROUND_1_SUSPENSE, ROUND_1_RESULTS, ROUND_2_VOTING, ROUND_2_SUSPENSE, ROUND_2_RESULTS, COORDINATIONS, FINISHED
       eligibleCourses: defaultEligibleCourses,
       votingCourses: allCourses,
+      selectedCandidateIds,
       candidates,
       round1Votes: {}, // { voterId: candidateId }
       round2Votes: {}, // { voterId: candidateId }
@@ -79,6 +81,9 @@ export class ElectionManager {
       if (fs.existsSync(STATE_BACKUP_PATH)) {
         const saved = JSON.parse(fs.readFileSync(STATE_BACKUP_PATH, 'utf-8'));
         this.state = { ...this.state, ...saved };
+        if (!this.state.selectedCandidateIds && Array.isArray(this.state.candidates)) {
+          this.state.selectedCandidateIds = this.state.candidates.map(c => c.id);
+        }
         console.log('✅ Estado anterior restaurado exitosamente');
       }
     } catch (err) {
@@ -109,6 +114,7 @@ export class ElectionManager {
       status: this.state.status,
       eligibleCourses: this.state.eligibleCourses,
       votingCourses: this.state.votingCourses,
+      selectedCandidateIds: this.state.selectedCandidateIds || this.state.candidates.map(c => c.id),
       candidates: this.state.candidates,
       totalEligibleVoters,
       r1VoteCount,
@@ -128,6 +134,25 @@ export class ElectionManager {
         ? this.calculateResults(this.state.round2Votes, this.state.runoffCandidates)
         : null
     };
+  }
+
+  syncCandidates() {
+    const selectedIds = this.state.selectedCandidateIds || [];
+    const eligibleCourses = this.state.eligibleCourses || [];
+
+    this.state.candidates = this.seminaristas
+      .filter(s => selectedIds.includes(s.id) && eligibleCourses.includes(s.curso))
+      .map(s => {
+        const existing = (this.state.candidates || []).find(c => c.id === s.id);
+        return existing || {
+          id: s.id,
+          nombre: s.nombre,
+          curso: s.curso,
+          foto: s.foto || null,
+          votosR1: 0,
+          votosR2: 0
+        };
+      });
   }
 
   calculateResults(votesMap, candidatesList) {
@@ -164,30 +189,80 @@ export class ElectionManager {
 
   // --- Actions ---
 
-  updateConfig({ eligibleCourses, votingCourses }) {
-    if (this.state.status !== 'CONFIG') return { error: 'No se puede modificar la configuración una vez iniciada la elección' };
-    if (eligibleCourses) {
-      this.state.eligibleCourses = eligibleCourses;
-      // Re-filter candidates
-      this.state.candidates = this.seminaristas
-        .filter(s => eligibleCourses.includes(s.curso))
-        .map(s => {
-          const existing = this.state.candidates.find(c => c.id === s.id);
-          return existing || {
-            id: s.id,
-            nombre: s.nombre,
-            curso: s.curso,
-            foto: s.foto || null,
-            votosR1: 0,
-            votosR2: 0
-          };
-        });
+  updateConfig({ eligibleCourses, votingCourses, selectedCandidateIds }) {
+    if (this.state.status !== 'CONFIG') {
+      return { error: 'No se puede modificar la configuración una vez iniciada la elección. Reinicia la asamblea si necesitas reconfigurar.' };
     }
+
+    if (eligibleCourses) {
+      const prevEligible = this.state.eligibleCourses || [];
+      this.state.eligibleCourses = eligibleCourses;
+
+      const addedCourses = eligibleCourses.filter(c => !prevEligible.includes(c));
+      const removedCourses = prevEligible.filter(c => !eligibleCourses.includes(c));
+
+      let currentSelected = [...(this.state.selectedCandidateIds || this.state.candidates.map(c => c.id))];
+
+      // Remove seminaristas of removed courses
+      if (removedCourses.length > 0) {
+        currentSelected = currentSelected.filter(id => {
+          const sem = this.seminaristas.find(s => s.id === id);
+          return sem && !removedCourses.includes(sem.curso);
+        });
+      }
+
+      // Add seminaristas of newly added courses by default
+      if (addedCourses.length > 0) {
+        const newSeminaristas = this.seminaristas.filter(s => addedCourses.includes(s.curso));
+        newSeminaristas.forEach(s => {
+          if (!currentSelected.includes(s.id)) {
+            currentSelected.push(s.id);
+          }
+        });
+      }
+
+      this.state.selectedCandidateIds = currentSelected;
+    }
+
+    if (selectedCandidateIds && Array.isArray(selectedCandidateIds)) {
+      const eligibleSeminaristaIds = this.seminaristas
+        .filter(s => this.state.eligibleCourses.includes(s.curso))
+        .map(s => s.id);
+      this.state.selectedCandidateIds = selectedCandidateIds.filter(id => eligibleSeminaristaIds.includes(id));
+    }
+
     if (votingCourses) {
       this.state.votingCourses = votingCourses;
     }
+
+    this.syncCandidates();
     this.broadcastState();
     return { success: true };
+  }
+
+  toggleCandidate(seminaristaId) {
+    if (this.state.status !== 'CONFIG') {
+      return { error: 'No se pueden modificar candidatos una vez iniciada la elección.' };
+    }
+
+    const sem = this.seminaristas.find(s => s.id === seminaristaId);
+    if (!sem) return { error: 'Seminarista no encontrado en el padrón.' };
+
+    if (!this.state.eligibleCourses.includes(sem.curso)) {
+      return { error: `El curso ${sem.curso} no está habilitado como curso candidato.` };
+    }
+
+    let selected = [...(this.state.selectedCandidateIds || this.state.candidates.map(c => c.id))];
+    if (selected.includes(seminaristaId)) {
+      selected = selected.filter(id => id !== seminaristaId);
+    } else {
+      selected.push(seminaristaId);
+    }
+
+    this.state.selectedCandidateIds = selected;
+    this.syncCandidates();
+    this.broadcastState();
+    return { success: true, selectedCandidateIds: this.state.selectedCandidateIds };
   }
 
   updateCandidatePhoto(candidateId, photoUrl) {
@@ -203,10 +278,14 @@ export class ElectionManager {
   }
 
   startRound1() {
+    if (!this.state.candidates || this.state.candidates.length < 2) {
+      return { error: 'Debe haber al menos 2 candidatos seleccionados para abrir la votación de 1ª Vuelta.' };
+    }
     this.state.status = 'ROUND_1_VOTING';
     this.state.round1Votes = {};
     this.state.winner = null;
     this.state.runoffCandidates = [];
+    this.state.suspenseTriggeredAt = null;
     this.broadcastState();
     return { success: true };
   }
