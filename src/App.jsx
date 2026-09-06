@@ -11,10 +11,43 @@ import VoterMobile from './components/VoterMobile';
 import { Tv, Tablet, Smartphone, Sparkles, ExternalLink, Wifi, Shield } from 'lucide-react';
 
 export default function App() {
-  const [electionState, setElectionState] = useState(defaultState);
+  const [electionState, setElectionState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('coordinacion_election_state');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return defaultState;
+  });
   const [seminaristas, setSeminaristas] = useState(defaultSeminaristas);
   const [networkInfo, setNetworkInfo] = useState(null);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Cross-tab and local storage real-time synchronization
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === 'coordinacion_election_state' && e.newValue) {
+        try {
+          setElectionState(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    let bc = null;
+    try {
+      bc = new BroadcastChannel('coordinacion_election');
+      bc.onmessage = (event) => {
+        if (event.data) {
+          setElectionState(event.data);
+        }
+      };
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      if (bc) bc.close();
+    };
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => setCurrentPath(window.location.pathname);
@@ -184,6 +217,7 @@ export default function App() {
                 state={electionState} 
                 seminaristas={seminaristas} 
                 networkInfo={networkInfo} 
+                onUpdateState={setElectionState}
               />
             </motion.div>
           )}
@@ -201,6 +235,7 @@ export default function App() {
                 state={electionState} 
                 seminaristas={seminaristas} 
                 networkInfo={networkInfo} 
+                onUpdateState={setElectionState}
               />
             </motion.div>
           )}
@@ -217,6 +252,7 @@ export default function App() {
               <VoterMobile 
                 state={electionState} 
                 seminaristas={seminaristas} 
+                onUpdateState={setElectionState}
               />
             </motion.div>
           )}

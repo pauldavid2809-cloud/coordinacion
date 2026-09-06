@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
 import { supabase } from '../utils/supabase';
+import { castVoteInState } from '../utils/electionStore';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { 
   CheckCircle2, 
@@ -18,7 +19,7 @@ import {
   X
 } from 'lucide-react';
 
-export default function VoterMobile({ state, seminaristas = [] }) {
+export default function VoterMobile({ state, seminaristas = [], onUpdateState }) {
   const [selectedVoterId, setSelectedVoterId] = useState('');
   const [cedulaInput, setCedulaInput] = useState('');
   const [voterValidated, setVoterValidated] = useState(false);
@@ -118,22 +119,30 @@ export default function VoterMobile({ state, seminaristas = [] }) {
         }
       });
     } else {
-      // Fallback to Supabase direct record when deployed on Vercel
+      // Fallback to Supabase direct record and local store when deployed on Vercel
       try {
         if (supabase) {
-          await supabase.from('coord_votes').upsert({
-            voter_id: selectedVoterId,
-            round: currentRound,
-            candidate_id: selectedCandidateId,
-            created_at: new Date().toISOString()
-          }, { onConflict: 'voter_id,round' });
-
-          soundEffects.playSuccess();
-          setVotedSuccess(true);
-          setShowConfirmModal(false);
-        } else {
-          setErrorMsg('No hay conexión con el servidor.');
+          try {
+            await supabase.from('coord_votes').upsert({
+              voter_id: selectedVoterId,
+              round: currentRound,
+              candidate_id: selectedCandidateId,
+              created_at: new Date().toISOString()
+            }, { onConflict: 'voter_id,round' });
+          } catch (e) {
+            console.warn('Supabase votes upsert fallback:', e);
+          }
         }
+
+        castVoteInState(
+          state, 
+          { voterId: selectedVoterId, candidateId: selectedCandidateId, round: currentRound }, 
+          onUpdateState
+        );
+
+        soundEffects.playSuccess();
+        setVotedSuccess(true);
+        setShowConfirmModal(false);
       } catch (err) {
         setErrorMsg('Error al registrar voto: ' + (err.message || 'Error de red'));
       } finally {

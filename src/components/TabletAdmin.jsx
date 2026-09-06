@@ -32,17 +32,20 @@ import {
   Loader2
 } from 'lucide-react';
 
-const ALL_COURSES = [
-  '1° de Filosofía',
-  '2° de Filosofía',
-  '3° de Filosofía',
-  '1° de Teología',
-  '2° de Teología',
-  '3° de Teología',
-  '4° de Teología'
-];
+import { 
+  resetElection, 
+  startRound1, 
+  triggerSuspense, 
+  revealResults, 
+  startRound2, 
+  goToCoordinations, 
+  toggleCandidateInState, 
+  updateEligibleCoursesInState, 
+  selectAllInCourseInState,
+  ALL_COURSES
+} from '../utils/electionStore';
 
-export default function TabletAdmin({ state, seminaristas = [] }) {
+export default function TabletAdmin({ state, seminaristas = [], onUpdateState }) {
   const [activeTab, setActiveTab] = useState('MAIN'); // MAIN, ATTENDANCE, SETTINGS
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [selectedCandidateForUpload, setSelectedCandidateForUpload] = useState(null);
@@ -118,9 +121,7 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
       alert('Debe haber al menos un curso elegible para elegir candidatos.');
       return;
     }
-    socket.emit('election:update_config', { eligibleCourses: updated }, (res) => {
-      if (res?.error) alert(res.error);
-    });
+    updateEligibleCoursesInState(state, updated, seminaristas, onUpdateState);
   };
 
   const handleToggleVotingCourse = (course) => {
@@ -132,35 +133,22 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
       alert('Debe haber al menos un curso habilitado para votar.');
       return;
     }
-    socket.emit('election:update_config', { votingCourses: updated }, (res) => {
-      if (res?.error) alert(res.error);
-    });
+    if (socket.connected) {
+      socket.emit('election:update_config', { votingCourses: updated });
+    }
+    if (onUpdateState) {
+      onUpdateState({ ...state, votingCourses: updated });
+    }
   };
 
   const handleToggleCandidate = (seminaristaId) => {
     soundEffects.playClick();
-    socket.emit('election:toggle_candidate', { seminaristaId }, (res) => {
-      if (res?.error) alert(res.error);
-    });
+    toggleCandidateInState(state, seminaristaId, seminaristas, onUpdateState);
   };
 
   const handleSelectAllInCourse = (course, selectAll = true) => {
     soundEffects.playClick();
-    const courseSeminaristas = seminaristas.filter(s => s.curso === course);
-    const courseSemIds = courseSeminaristas.map(s => s.id);
-    let updatedSelected = [...selectedCandidateIds];
-
-    if (selectAll) {
-      courseSemIds.forEach(id => {
-        if (!updatedSelected.includes(id)) updatedSelected.push(id);
-      });
-    } else {
-      updatedSelected = updatedSelected.filter(id => !courseSemIds.includes(id));
-    }
-
-    socket.emit('election:update_config', { selectedCandidateIds: updatedSelected }, (res) => {
-      if (res?.error) alert(res.error);
-    });
+    selectAllInCourseInState(state, course, selectAll, seminaristas, onUpdateState);
   };
 
   const handleStartRound1 = () => {
@@ -169,47 +157,40 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
       return;
     }
 
-    if (!socket.connected) {
-      alert('Sin conexión con el servidor backend. Verifica que el servidor esté activo.');
-      return;
-    }
-
     soundEffects.playClick();
     setIsStartingRound1(true);
-    socket.emit('election:start_round_1', (res) => {
+    startRound1(state, onUpdateState);
+    setTimeout(() => {
       setIsStartingRound1(false);
-      if (res?.error) {
-        alert(res.error);
-      } else {
-        soundEffects.playSuccess();
-      }
-    });
+      soundEffects.playSuccess();
+    }, 250);
   };
 
   const handleTriggerSuspense = (round = 1) => {
     soundEffects.playClick();
-    socket.emit('election:trigger_suspense', { round });
+    triggerSuspense(state, round, onUpdateState);
   };
 
   const handleRevealResults = (round = 1) => {
     soundEffects.playClick();
-    socket.emit('election:reveal_results', { round });
+    revealResults(state, round, onUpdateState);
   };
 
   const handleStartRound2 = () => {
     soundEffects.playClick();
-    socket.emit('election:start_round_2');
+    startRound2(state, onUpdateState);
   };
 
   const handleGoToCoordinations = () => {
     soundEffects.playClick();
-    socket.emit('election:go_to_coordinations');
+    goToCoordinations(state, onUpdateState);
   };
 
-  const handleResetElection = () => {
+  const handleResetElection = async () => {
     if (window.confirm('¿Reiniciar todo el proceso electoral? Se borrarán los votos registrados y volverás a la fase de configuración.')) {
       soundEffects.playClick();
-      socket.emit('election:reset');
+      await resetElection(seminaristas, onUpdateState);
+      soundEffects.playSuccess();
     }
   };
 
@@ -600,6 +581,7 @@ export default function TabletAdmin({ state, seminaristas = [] }) {
                 state={state} 
                 seminaristas={seminaristas} 
                 isTabletAdmin={true} 
+                onUpdateState={onUpdateState}
               />
             </div>
           )}

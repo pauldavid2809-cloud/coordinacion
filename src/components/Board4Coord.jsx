@@ -4,6 +4,7 @@ import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { generateOrdenDeLaCasaPDF } from '../utils/pdfGenerator';
+import { assignCoordinationInState, setAreaCoordinatorInState } from '../utils/electionStore';
 import { 
   Cross, 
   BookOpen, 
@@ -69,7 +70,8 @@ export const COORDINATION_DEFS = {
 export default function Board4Coord({ 
   state, 
   seminaristas = [], 
-  isTabletAdmin = false 
+  isTabletAdmin = false,
+  onUpdateState 
 }) {
   const [selectedSemId, setSelectedSemId] = useState(null);
   const [filterCourse, setFilterCourse] = useState('ALL');
@@ -123,10 +125,14 @@ export default function Board4Coord({
 
   const handleAssign = (seminaristaId, targetCoordKey) => {
     soundEffects.playClick();
-    socket.emit('coordination:assign', {
-      seminaristaId,
-      coordinationKey: targetCoordKey
-    });
+    if (onUpdateState) {
+      assignCoordinationInState(state, seminaristaId, targetCoordKey, onUpdateState);
+    } else {
+      socket.emit('coordination:assign', {
+        seminaristaId,
+        coordinationKey: targetCoordKey
+      });
+    }
     setSelectedSemId(null);
     setDraggedSemId(null);
     setDragOverZone(null);
@@ -134,18 +140,26 @@ export default function Board4Coord({
 
   const handleSetCoordinator = (coordinationKey, seminaristaId) => {
     soundEffects.playClick();
-    socket.emit('coordination:set_coordinator', {
-      coordinationKey,
-      seminaristaId
-    });
+    if (onUpdateState) {
+      setAreaCoordinatorInState(state, coordinationKey, seminaristaId, onUpdateState);
+    } else {
+      socket.emit('coordination:set_coordinator', {
+        coordinationKey,
+        seminaristaId
+      });
+    }
   };
 
   const handleUnassign = (seminaristaId) => {
     soundEffects.playClick();
-    socket.emit('coordination:assign', {
-      seminaristaId,
-      coordinationKey: 'unassigned'
-    });
+    if (onUpdateState) {
+      assignCoordinationInState(state, seminaristaId, 'unassigned', onUpdateState);
+    } else {
+      socket.emit('coordination:assign', {
+        seminaristaId,
+        coordinationKey: 'unassigned'
+      });
+    }
     setDraggedSemId(null);
     setDragOverZone(null);
   };
