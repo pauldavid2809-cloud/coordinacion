@@ -52,8 +52,68 @@ export default function TVView({ state, seminaristas = [] }) {
   const votesRemaining = Math.max(0, totalEligible - currentVotesCount);
   const threshold34 = Math.ceil(totalEligible * 0.75);
 
+  // Dynamic layout adapter for candidates showcase on TV
+  const getCandidateGridConfig = (count) => {
+    if (count <= 2) {
+      return {
+        containerClass: 'grid grid-cols-2 gap-4 max-w-xl mx-auto w-full',
+        cardClass: 'p-3 sm:p-3.5 space-y-2',
+        imageClass: 'w-20 h-20 sm:w-24 sm:h-24',
+        nameClass: 'text-xs sm:text-sm',
+        badgeClass: 'text-[10px]'
+      };
+    }
+    if (count === 3) {
+      return {
+        containerClass: 'grid grid-cols-3 gap-3.5 max-w-3xl mx-auto w-full',
+        cardClass: 'p-2.5 sm:p-3 space-y-1.5',
+        imageClass: 'w-18 h-18 sm:w-22 sm:h-22',
+        nameClass: 'text-xs sm:text-sm',
+        badgeClass: 'text-[10px]'
+      };
+    }
+    if (count === 4) {
+      return {
+        containerClass: 'grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-5xl mx-auto w-full',
+        cardClass: 'p-2 sm:p-2.5 space-y-1.5',
+        imageClass: 'w-16 h-16 sm:w-18 sm:h-18',
+        nameClass: 'text-xs sm:text-sm',
+        badgeClass: 'text-[10px]'
+      };
+    }
+    if (count === 5) {
+      return {
+        containerClass: 'grid grid-cols-3 sm:grid-cols-5 gap-2 max-w-6xl mx-auto w-full',
+        cardClass: 'p-1.5 sm:p-2 space-y-1',
+        imageClass: 'w-13 h-13 sm:w-15 sm:h-15 lg:w-16 lg:h-16',
+        nameClass: 'text-[11px] sm:text-xs',
+        badgeClass: 'text-[9px] sm:text-[10px]'
+      };
+    }
+    if (count === 6) {
+      return {
+        containerClass: 'grid grid-cols-3 sm:grid-cols-6 gap-2 max-w-7xl mx-auto w-full',
+        cardClass: 'p-1.5 sm:p-2 space-y-1',
+        imageClass: 'w-12 h-12 sm:w-14 sm:h-14 lg:w-15 lg:h-15',
+        nameClass: 'text-[10px] sm:text-xs',
+        badgeClass: 'text-[9px]'
+      };
+    }
+    // 7 or more candidates
+    return {
+      containerClass: 'flex flex-wrap items-stretch justify-center gap-2 max-w-7xl mx-auto w-full',
+      cardClass: 'p-1.5 space-y-1 flex-1 min-w-[105px] max-w-[140px]',
+      imageClass: 'w-11 h-11 sm:w-13 sm:h-13',
+      nameClass: 'text-[10px] sm:text-[11px]',
+      badgeClass: 'text-[8px] sm:text-[9px]'
+    };
+  };
+
+  const candidateConfig = getCandidateGridConfig(candidates.length);
+  const isHighCandidateCount = candidates.length >= 5;
+
   // SVG circular gauge
-  const radius = 80;
+  const radius = isHighCandidateCount ? 70 : 80;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (participationPct / 100) * circumference;
 
@@ -175,7 +235,7 @@ export default function TVView({ state, seminaristas = [] }) {
                   </div>
 
                   {/* SVG Dial */}
-                  <div className="relative w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center my-1">
+                  <div className={`relative ${isHighCandidateCount ? 'w-36 h-36 sm:w-40 sm:h-40' : 'w-44 h-44 sm:w-48 sm:h-48'} flex items-center justify-center my-1 transition-all duration-300`}>
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 190 190">
                       <circle
                         cx="95"
@@ -209,7 +269,7 @@ export default function TVView({ state, seminaristas = [] }) {
 
                     {/* Inner Counter */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
+                      <span className={`${isHighCandidateCount ? 'text-3xl sm:text-4xl' : 'text-4xl sm:text-5xl'} font-black font-mono tracking-tight text-white drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]`}>
                         {participationPct}%
                       </span>
                       <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest mt-0.5">
@@ -219,7 +279,7 @@ export default function TVView({ state, seminaristas = [] }) {
                   </div>
 
                   {/* Subtitle Metrics */}
-                  <div className="mt-2 pt-3 border-t border-white/[0.08] w-full flex items-center justify-around">
+                  <div className={`mt-2 ${isHighCandidateCount ? 'pt-2' : 'pt-3'} border-t border-white/[0.08] w-full flex items-center justify-around`}>
                     <div>
                       <span className="text-[10px] font-mono uppercase font-bold text-slate-400 block">Emitidos</span>
                       <span className="text-xl sm:text-2xl font-black font-mono text-amber-300">{currentVotesCount}</span>
@@ -239,14 +299,14 @@ export default function TVView({ state, seminaristas = [] }) {
 
                 {/* Right: Statutory Canonical Rules */}
                 <div className="lg:col-span-7 flex flex-col space-y-3">
-                  <div className="card-senior rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
+                  <div className={`card-senior rounded-2xl ${isHighCandidateCount ? 'p-3.5 sm:p-4 space-y-2.5' : 'p-5 sm:p-6 space-y-4'} shadow-xl`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-lg">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-lg shrink-0">
                           <Scale className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="text-base sm:text-lg font-serif font-black text-white leading-tight">
+                          <h3 className={`${isHighCandidateCount ? 'text-sm sm:text-base' : 'text-base sm:text-lg'} font-serif font-black text-white leading-tight`}>
                             Régimen Electoral Canónico
                           </h3>
                           <span className="text-xs text-slate-400 font-medium">Mayoría Calificada Constitucional</span>
@@ -259,7 +319,7 @@ export default function TVView({ state, seminaristas = [] }) {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3.5 rounded-xl bg-[#070D1F] border border-white/[0.08] space-y-1">
+                      <div className={`${isHighCandidateCount ? 'p-2.5 sm:p-3' : 'p-3.5'} rounded-xl bg-[#070D1F] border border-white/[0.08] space-y-1`}>
                         <span className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                           <CheckCircle2 className="w-4 h-4" />
                           <span>Regla de 3/4 de Votos</span>
@@ -269,7 +329,7 @@ export default function TVView({ state, seminaristas = [] }) {
                         </p>
                       </div>
 
-                      <div className="p-3.5 rounded-xl bg-[#070D1F] border border-white/[0.08] space-y-1">
+                      <div className={`${isHighCandidateCount ? 'p-2.5 sm:p-3' : 'p-3.5'} rounded-xl bg-[#070D1F] border border-white/[0.08] space-y-1`}>
                         <span className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
                           <Flame className="w-4 h-4" />
                           <span>Segunda Vuelta (Balotaje)</span>
@@ -305,22 +365,16 @@ export default function TVView({ state, seminaristas = [] }) {
                   </span>
                 </div>
 
-                <div className={`grid gap-3 sm:gap-4 w-full ${
-                  candidates.length <= 2 
-                    ? 'grid-cols-2 max-w-xl mx-auto' 
-                    : candidates.length === 3 
-                    ? 'grid-cols-3 max-w-3xl mx-auto' 
-                    : 'grid-cols-2 sm:grid-cols-4'
-                }`}>
+                <div className={candidateConfig.containerClass}>
                   {candidates.map((cand) => (
                     <motion.div
                       key={cand.id}
                       whileHover={{ y: -3, scale: 1.01 }}
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      className="card-senior group relative rounded-2xl p-3 sm:p-3.5 flex flex-col items-center text-center space-y-2 shadow-xl"
+                      className={`card-senior group relative rounded-2xl flex flex-col items-center text-center shadow-xl ${candidateConfig.cardClass}`}
                     >
                       {/* Portrait Frame */}
-                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 border-amber-500/30 group-hover:border-amber-400 bg-slate-950 shadow-xl transition-colors duration-300">
+                      <div className={`relative ${candidateConfig.imageClass} rounded-xl overflow-hidden border-2 border-amber-500/30 group-hover:border-amber-400 bg-slate-950 shadow-xl transition-colors duration-300`}>
                         {cand.foto ? (
                           <img 
                             src={cand.foto} 
@@ -334,10 +388,10 @@ export default function TVView({ state, seminaristas = [] }) {
                       </div>
 
                       <div className="w-full">
-                        <h3 className="font-serif font-bold text-xs sm:text-sm text-white truncate group-hover:text-amber-300 transition-colors">
+                        <h3 className={`font-serif font-bold text-white truncate group-hover:text-amber-300 transition-colors ${candidateConfig.nameClass}`}>
                           {cand.nombre}
                         </h3>
-                        <span className="inline-block mt-0.5 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-950 text-sky-300 border border-blue-500/30">
+                        <span className={`inline-block mt-0.5 font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-950 text-sky-300 border border-blue-500/30 ${candidateConfig.badgeClass}`}>
                           {cand.curso}
                         </span>
                       </div>

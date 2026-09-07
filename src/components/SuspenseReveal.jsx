@@ -26,6 +26,57 @@ export default function SuspenseReveal({ state, onAdvanceToCoordinations, onStar
   const winner = state?.winner;
   const isRunoffRequired = isRound1 && !winner && (state?.runoffCandidates?.length >= 2);
 
+  const getSuspenseGridConfig = (count) => {
+    if (count <= 2) {
+      return {
+        containerClass: 'grid grid-cols-2 gap-5 w-full max-w-xl mx-auto pt-2',
+        cardClass: 'p-3.5 sm:p-4',
+        imageClass: 'w-20 h-20 sm:w-24 sm:h-24',
+        nameClass: 'text-xs sm:text-sm'
+      };
+    }
+    if (count === 3) {
+      return {
+        containerClass: 'grid grid-cols-3 gap-4 w-full max-w-3xl mx-auto pt-2',
+        cardClass: 'p-3 sm:p-3.5',
+        imageClass: 'w-18 h-18 sm:w-22 sm:h-22',
+        nameClass: 'text-xs sm:text-sm'
+      };
+    }
+    if (count === 4) {
+      return {
+        containerClass: 'grid grid-cols-2 sm:grid-cols-4 gap-3.5 w-full max-w-4xl mx-auto pt-2',
+        cardClass: 'p-2.5 sm:p-3',
+        imageClass: 'w-16 h-16 sm:w-20 sm:h-20',
+        nameClass: 'text-xs sm:text-sm'
+      };
+    }
+    if (count === 5) {
+      return {
+        containerClass: 'grid grid-cols-3 sm:grid-cols-5 gap-2.5 w-full max-w-5xl mx-auto pt-2',
+        cardClass: 'p-2 sm:p-2.5',
+        imageClass: 'w-14 h-14 sm:w-16 sm:h-16 lg:w-18 lg:h-18',
+        nameClass: 'text-[11px] sm:text-xs'
+      };
+    }
+    if (count === 6) {
+      return {
+        containerClass: 'grid grid-cols-3 sm:grid-cols-6 gap-2 w-full max-w-6xl mx-auto pt-2',
+        cardClass: 'p-1.5 sm:p-2',
+        imageClass: 'w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16',
+        nameClass: 'text-[10px] sm:text-xs'
+      };
+    }
+    return {
+      containerClass: 'flex flex-wrap items-stretch justify-center gap-2 w-full max-w-6xl mx-auto pt-2',
+      cardClass: 'p-1.5 sm:p-2 flex-1 min-w-[110px] max-w-[150px]',
+      imageClass: 'w-12 h-12 sm:w-14 sm:h-14',
+      nameClass: 'text-[10px] sm:text-[11px]'
+    };
+  };
+
+  const suspenseConfig = getSuspenseGridConfig(candidates.length);
+
   // Suspense cycling animation & sound
   useEffect(() => {
     if (isSuspense) {
@@ -139,25 +190,25 @@ export default function SuspenseReveal({ state, onAdvanceToCoordinations, onStar
           </div>
 
           {/* Dynamic 3D Perspective Candidate Cycling */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl pt-2">
+          <div className={suspenseConfig.containerClass}>
             {candidates.map((cand, idx) => {
               const isFocused = activeHighlightIndex === idx;
               return (
                 <motion.div
                   key={cand.id}
                   animate={{
-                    scale: isFocused ? 1.06 : 0.94,
+                    scale: isFocused ? 1.05 : 0.94,
                     opacity: isFocused ? 1 : 0.45,
-                    y: isFocused ? -6 : 0
+                    y: isFocused ? -4 : 0
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                  className={`rounded-2xl p-3 sm:p-4 flex flex-col items-center border transition-colors duration-200 ${
+                  className={`rounded-2xl flex flex-col items-center border transition-colors duration-200 ${suspenseConfig.cardClass} ${
                     isFocused
                       ? 'card-senior-gold border-amber-400 shadow-[0_0_40px_rgba(245,158,11,0.5)] z-20'
                       : 'bg-slate-950/80 border-white/[0.08]'
                   }`}
                 >
-                  <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border-2 bg-slate-950 mb-2.5 shadow-xl transition-all ${
+                  <div className={`${suspenseConfig.imageClass} rounded-xl overflow-hidden border-2 bg-slate-950 mb-2 shadow-xl transition-all ${
                     isFocused ? 'border-amber-400 ring-2 ring-amber-400/40' : 'border-slate-800'
                   }`}>
                     {cand.foto ? (
@@ -167,7 +218,7 @@ export default function SuspenseReveal({ state, onAdvanceToCoordinations, onStar
                     )}
                   </div>
 
-                  <span className={`font-serif font-bold text-xs sm:text-sm text-center truncate w-full ${
+                  <span className={`font-serif font-bold text-center truncate w-full ${suspenseConfig.nameClass} ${
                     isFocused ? 'text-amber-200' : 'text-slate-400'
                   }`}>
                     {cand.nombre}

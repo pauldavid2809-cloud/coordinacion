@@ -369,36 +369,45 @@ export default function TabletAdmin({ state, seminaristas = [], onUpdateState })
               )}
 
               {/* Candidates preview */}
-              <div className={`grid gap-3.5 max-w-3xl mx-auto w-full ${
+              <div className={`grid gap-3 max-w-4xl mx-auto w-full ${
                 candidates.length <= 2 
                   ? 'grid-cols-2 max-w-md' 
                   : candidates.length === 3 
                   ? 'grid-cols-3 max-w-2xl' 
-                  : 'grid-cols-2 sm:grid-cols-4'
+                  : candidates.length === 4 
+                  ? 'grid-cols-2 sm:grid-cols-4 max-w-3xl' 
+                  : candidates.length === 5 
+                  ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5 max-w-4xl' 
+                  : candidates.length === 6 
+                  ? 'grid-cols-3 sm:grid-cols-6 max-w-5xl' 
+                  : 'grid-cols-2 sm:grid-cols-4 md:grid-cols-6 max-w-5xl'
               }`}>
-                {candidates.map(cand => (
-                  <div key={cand.id} className="relative group p-3 rounded-2xl bg-[#050817] border border-white/[0.08] hover:border-amber-400/40 transition-all text-center shadow-md">
-                    {/* Quick remove button */}
-                    <button
-                      type="button"
-                      onClick={() => handleToggleCandidate(cand.id)}
-                      title="Excluir a este seminarista de los candidatos"
-                      className="absolute top-2 right-2 w-5 h-5 rounded-full bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 flex items-center justify-center text-[10px] transition-all opacity-70 group-hover:opacity-100"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+                {candidates.map(cand => {
+                  const isCompact = candidates.length >= 5;
+                  return (
+                    <div key={cand.id} className={`relative group ${isCompact ? 'p-2' : 'p-3'} rounded-2xl bg-[#050817] border border-white/[0.08] hover:border-amber-400/40 transition-all text-center shadow-md`}>
+                      {/* Quick remove button */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleCandidate(cand.id)}
+                        title="Excluir a este seminarista de los candidatos"
+                        className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 flex items-center justify-center text-[10px] transition-all opacity-70 group-hover:opacity-100"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
 
-                    <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto border border-amber-400/40 mb-2 bg-slate-950 shadow-md">
-                      {cand.foto ? (
-                        <img src={cand.foto} alt={cand.nombre} className="w-full h-full object-cover" />
-                      ) : (
-                        <AvatarPlaceholder name={cand.nombre} />
-                      )}
+                      <div className={`${isCompact ? 'w-14 h-14 sm:w-16 sm:h-16' : 'w-20 h-20'} rounded-xl overflow-hidden mx-auto border border-amber-400/40 mb-1.5 bg-slate-950 shadow-md`}>
+                        {cand.foto ? (
+                          <img src={cand.foto} alt={cand.nombre} className="w-full h-full object-cover" />
+                        ) : (
+                          <AvatarPlaceholder name={cand.nombre} />
+                        )}
+                      </div>
+                      <span className={`font-serif font-bold text-white block truncate ${isCompact ? 'text-[11px]' : 'text-xs'}`}>{cand.nombre}</span>
+                      <span className="text-[10px] font-mono text-sky-300">{cand.curso}</span>
                     </div>
-                    <span className="text-xs font-serif font-bold text-white block truncate">{cand.nombre}</span>
-                    <span className="text-[10px] font-mono text-sky-300">{cand.curso}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="pt-2 max-w-sm mx-auto">
@@ -655,39 +664,54 @@ export default function TabletAdmin({ state, seminaristas = [], onUpdateState })
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {candidates.map(cand => (
-                <div
-                  key={cand.id}
-                  className="bg-[#050817] border border-white/[0.08] rounded-xl p-3.5 flex flex-col items-center text-center space-y-2.5 shadow-md"
-                >
-                  <div className="w-24 h-24 rounded-xl overflow-hidden border-2 border-amber-400/40 bg-slate-950 shadow-md">
-                    {cand.foto ? (
-                      <img src={cand.foto} alt={cand.nombre} className="w-full h-full object-cover" />
-                    ) : (
-                      <AvatarPlaceholder name={cand.nombre} />
-                    )}
-                  </div>
-                  <div className="w-full">
-                    <span className="text-xs font-serif font-bold text-white block truncate">
-                      {cand.nombre}
-                    </span>
-                    <span className="text-[10px] font-mono text-sky-300 font-semibold">
-                      {cand.curso}
-                    </span>
-                  </div>
-
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => triggerPhotoUpload(cand.id)}
-                    disabled={isUploadingPhoto}
-                    className="w-full py-1.5 px-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-400/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow"
+            <div className={`grid gap-3.5 w-full ${
+              candidates.length <= 2 
+                ? 'grid-cols-2 max-w-md mx-auto' 
+                : candidates.length === 3 
+                ? 'grid-cols-3 max-w-2xl mx-auto' 
+                : candidates.length === 4 
+                ? 'grid-cols-2 sm:grid-cols-4' 
+                : candidates.length === 5 
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5' 
+                : candidates.length === 6 
+                ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-6' 
+                : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6'
+            }`}>
+              {candidates.map(cand => {
+                const isCompact = candidates.length >= 5;
+                return (
+                  <div
+                    key={cand.id}
+                    className={`bg-[#050817] border border-white/[0.08] rounded-xl ${isCompact ? 'p-2.5 space-y-2' : 'p-3.5 space-y-2.5'} flex flex-col items-center text-center shadow-md`}
                   >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>{cand.foto ? 'Cambiar Foto' : 'Cargar Foto'}</span>
-                  </motion.button>
-                </div>
-              ))}
+                    <div className={`${isCompact ? 'w-18 h-18 sm:w-20 sm:h-20' : 'w-24 h-24'} rounded-xl overflow-hidden border-2 border-amber-400/40 bg-slate-950 shadow-md`}>
+                      {cand.foto ? (
+                        <img src={cand.foto} alt={cand.nombre} className="w-full h-full object-cover" />
+                      ) : (
+                        <AvatarPlaceholder name={cand.nombre} />
+                      )}
+                    </div>
+                    <div className="w-full">
+                      <span className="text-xs font-serif font-bold text-white block truncate">
+                        {cand.nombre}
+                      </span>
+                      <span className="text-[10px] font-mono text-sky-300 font-semibold">
+                        {cand.curso}
+                      </span>
+                    </div>
+
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => triggerPhotoUpload(cand.id)}
+                      disabled={isUploadingPhoto}
+                      className="w-full py-1.5 px-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-400/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{cand.foto ? 'Cambiar' : 'Cargar'}</span>
+                    </motion.button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
