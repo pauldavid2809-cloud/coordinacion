@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
-import { supabase } from '../utils/supabase';
 import { castVoteInState } from '../utils/electionStore';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { 
@@ -107,47 +106,28 @@ export default function VoterMobile({ state, seminaristas = [], onUpdateState })
       round: currentRound
     };
 
-    if (socket.connected) {
-      socket.emit('election:cast_vote', votePayload, (res) => {
-        setIsSubmitting(false);
-        if (res?.error) {
-          setErrorMsg(res.error);
-        } else {
-          soundEffects.playSuccess();
-          setVotedSuccess(true);
-          setShowConfirmModal(false);
-        }
-      });
-    } else {
-      // Fallback to Supabase direct record and local store when deployed on Vercel
-      try {
-        if (supabase) {
-          try {
-            await supabase.from('coord_votes').upsert({
-              voter_id: selectedVoterId,
-              round: currentRound,
-              candidate_id: selectedCandidateId,
-              created_at: new Date().toISOString()
-            }, { onConflict: 'voter_id,round' });
-          } catch (e) {
-            console.warn('Supabase votes upsert fallback:', e);
+    try {
+      if (socket.connected) {
+        socket.emit('election:cast_vote', votePayload, (res) => {
+          if (res?.error) {
+            setErrorMsg(res.error);
           }
-        }
-
-        castVoteInState(
-          state, 
-          { voterId: selectedVoterId, candidateId: selectedCandidateId, round: currentRound }, 
-          onUpdateState
-        );
-
-        soundEffects.playSuccess();
-        setVotedSuccess(true);
-        setShowConfirmModal(false);
-      } catch (err) {
-        setErrorMsg('Error al registrar voto: ' + (err.message || 'Error de red'));
-      } finally {
-        setIsSubmitting(false);
+        });
       }
+
+      castVoteInState(
+        state, 
+        { voterId: selectedVoterId, candidateId: selectedCandidateId, round: currentRound }, 
+        onUpdateState
+      );
+
+      soundEffects.playSuccess();
+      setVotedSuccess(true);
+      setShowConfirmModal(false);
+    } catch (err) {
+      setErrorMsg('Error al registrar voto: ' + (err.message || 'Error de red'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

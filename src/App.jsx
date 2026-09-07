@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from './utils/socket';
-import { supabase } from './utils/supabase';
+import { db, ref, onValue, set } from './utils/firebase';
 import defaultSeminaristas from '../server/data/seminaristas.json';
 import defaultState from '../server/data/state.json';
 import HeaderBanner from './components/HeaderBanner';
@@ -94,72 +94,42 @@ export default function App() {
       })
       .catch(() => {});
 
-    // 4. Supabase Realtime fallback (essential for Vercel deployment)
-    let supabaseChannel = null;
-    if (supabase) {
-      supabase
-        .from('coord_election_state')
-        .select('*')
-        .eq('id', 'current')
-        .maybeSingle()
-        .then(({ data, error }) => {
-          if (data && !error) {
-            setElectionState(prev => ({
-              ...prev,
-              status: data.status || prev.status,
-              eligibleCourses: data.eligible_courses || prev.eligibleCourses,
-              votingCourses: data.voting_courses || prev.votingCourses,
-              candidates: data.candidates || prev.candidates,
-              selectedCandidateIds: (data.candidates || []).map(c => c.id),
-              round1Votes: data.round1_votes || {},
-              round2Votes: data.round2_votes || {},
-              runoffCandidates: data.runoff_candidates || [],
-              winner: data.winner || null,
-              coordinations: data.coordinations || prev.coordinations,
-              coordinators: data.coordinators || prev.coordinators,
-              subgroups: data.subgroups || prev.subgroups,
-              memberSubgroups: data.member_subgroups || data.memberSubgroups || prev.memberSubgroups,
-              r1VoteCount: Object.keys(data.round1_votes || {}).length,
-              r2VoteCount: Object.keys(data.round2_votes || {}).length,
-              r1VotedIds: Object.keys(data.round1_votes || {}),
-              r2VotedIds: Object.keys(data.round2_votes || {}),
-            }));
-          }
-        })
-        .catch(() => {});
+    // 4. Firebase Realtime Database live cross-device sync (Single Source of Truth on Vercel)
+    let unsubscribeFirebase = null;
+    try {
+      const stateRef = ref(db, 'election/state');
+      unsubscribeFirebase = onValue(stateRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.status) {
+          const r1Votes = data.round1Votes || {};
+          const r2Votes = data.round2Votes || {};
+          const r1VotedIds = Object.keys(r1Votes);
+          const r2VotedIds = Object.keys(r2Votes);
 
-      supabaseChannel = supabase
-        .channel('public:coord_election_state')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'coord_election_state' },
-          (payload) => {
-            if (payload.new) {
-              const data = payload.new;
-              setElectionState(prev => ({
-                ...prev,
-                status: data.status || prev.status,
-                eligibleCourses: data.eligible_courses || prev.eligibleCourses,
-                votingCourses: data.voting_courses || prev.votingCourses,
-                candidates: data.candidates || prev.candidates,
-                selectedCandidateIds: (data.candidates || []).map(c => c.id),
-                round1Votes: data.round1_votes || {},
-                round2Votes: data.round2_votes || {},
-                runoffCandidates: data.runoff_candidates || [],
-                winner: data.winner || null,
-                coordinations: data.coordinations || prev.coordinations,
-                coordinators: data.coordinators || prev.coordinators,
-                subgroups: data.subgroups || prev.subgroups,
-                memberSubgroups: data.member_subgroups || data.memberSubgroups || prev.memberSubgroups,
-                r1VoteCount: Object.keys(data.round1_votes || {}).length,
-                r2VoteCount: Object.keys(data.round2_votes || {}).length,
-                r1VotedIds: Object.keys(data.round1_votes || {}),
-                r2VotedIds: Object.keys(data.round2_votes || {}),
-              }));
-            }
-          }
-        )
-        .subscribe();
+          setElectionState(prev => ({
+            ...prev,
+            ...data,
+            round1Votes: r1Votes,
+            round2Votes: r2Votes,
+            r1VoteCount: r1VotedIds.length,
+            r2VoteCount: r2VotedIds.length,
+            r1VotedIds,
+            r2VotedIds,
+            selectedCandidateIds: data.selectedCandidateIds || (data.candidates || []).map(c => c.id),
+            coordinations: data.coordinations || prev.coordinations,
+            coordinators: data.coordinators || prev.coordinators,
+            subgroups: data.subgroups || prev.subgroups,
+            memberSubgroups: data.memberSubgroups || prev.memberSubgroups
+          }));
+        } else if (data === null) {
+          // Initialize Firebase with default state on first run
+          set(stateRef, defaultState).catch(() => {});
+        }
+      }, (err) => {
+        console.warn('Firebase onValue error:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase setup error:', err);
     }
 
     // 5. WebSocket handlers (for local network high-speed sync)
@@ -179,8 +149,8 @@ export default function App() {
     return () => {
       socket.off('election:state', handleState);
       socket.off('connect');
-      if (supabaseChannel) {
-        supabase.removeChannel(supabaseChannel);
+      if (typeof unsubscribeFirebase === 'function') {
+        unsubscribeFirebase();
       }
     };
   }, []);

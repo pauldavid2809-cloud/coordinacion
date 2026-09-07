@@ -1,6 +1,21 @@
 import { socket } from './socket';
-import { supabase } from './supabase';
+import { db, ref, set, update } from './firebase';
 import defaultState from '../../server/data/state.json';
+
+export function cleanStateForFirebase(obj) {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(cleanStateForFirebase);
+  }
+  const clean = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val !== undefined) {
+      clean[key] = cleanStateForFirebase(val);
+    }
+  }
+  return clean;
+}
 
 export const ALL_COURSES = [
   '1° de Filosofía',
@@ -92,25 +107,14 @@ export function broadcastStateChange(newState, onUpdateState) {
     bc.close();
   } catch (e) {}
 
-  if (supabase) {
-    Promise.resolve(
-      supabase.from('coord_election_state').upsert({
-        id: 'current',
-        status: newState.status,
-        eligible_courses: newState.eligibleCourses,
-        voting_courses: newState.votingCourses,
-        candidates: newState.candidates,
-        round1_votes: newState.round1Votes || {},
-        round2_votes: newState.round2Votes || {},
-        runoff_candidates: newState.runoffCandidates || [],
-        winner: newState.winner || null,
-        coordinations: newState.coordinations || {},
-        coordinators: newState.coordinators || {},
-        subgroups: newState.subgroups || DEFAULT_SUBGROUPS,
-        member_subgroups: newState.memberSubgroups || {},
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' })
-    ).catch(() => {});
+  // Firebase Realtime Database cross-device cloud sync
+  try {
+    const stateRef = ref(db, 'election/state');
+    set(stateRef, cleanStateForFirebase(newState)).catch((err) => {
+      console.warn('Firebase set error:', err);
+    });
+  } catch (err) {
+    console.warn('Firebase state sync error:', err);
   }
 }
 
@@ -166,12 +170,6 @@ export async function resetElection(seminaristas = [], onUpdateState) {
     localStorage.removeItem('seminario_voter_id');
     localStorage.removeItem('seminario_voter_cedula');
   } catch (e) {}
-
-  if (supabase) {
-    try {
-      await supabase.from('coord_votes').delete().neq('voter_id', '__none__');
-    } catch (e) {}
-  }
 
   broadcastStateChange(cleanState, onUpdateState);
   return cleanState;
@@ -504,7 +502,30 @@ export function castVoteInState(state, { voterId, candidateId, round }, onUpdate
     r2VotedIds
   };
 
-  broadcastStateChange(newState, onUpdateState);
+  if (onUpdateState) {
+    onUpdateState(newState);
+  }
+
+  try {
+    localStorage.setItem('coordinacion_election_state', JSON.stringify(newState));
+  } catch (e) {}
+
+  try {
+    const bc = new BroadcastChannel('coordinacion_election');
+    bc.postMessage(newState);
+    bc.close();
+  } catch (e) {}
+
+  // Atomic vote registration in Firebase Realtime Database (prevents race conditions)
+  try {
+    const votePath = round === 1 ? 'election/state/round1Votes' : 'election/state/round2Votes';
+    update(ref(db, votePath), { [voterId]: candidateId }).catch(err => {
+      console.warn('Firebase vote error:', err);
+    });
+  } catch (err) {
+    console.warn('Firebase vote sync error:', err);
+  }
+
   return newState;
 }
 

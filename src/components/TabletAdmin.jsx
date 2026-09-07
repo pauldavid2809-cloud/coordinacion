@@ -42,6 +42,7 @@ import {
   toggleCandidateInState, 
   updateEligibleCoursesInState, 
   selectAllInCourseInState,
+  broadcastStateChange,
   ALL_COURSES
 } from '../utils/electionStore';
 
@@ -136,9 +137,7 @@ export default function TabletAdmin({ state, seminaristas = [], onUpdateState })
     if (socket.connected) {
       socket.emit('election:update_config', { votingCourses: updated });
     }
-    if (onUpdateState) {
-      onUpdateState({ ...state, votingCourses: updated });
-    }
+    broadcastStateChange({ ...state, votingCourses: updated }, onUpdateState);
   };
 
   const handleToggleCandidate = (seminaristaId) => {
