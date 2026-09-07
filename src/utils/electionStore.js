@@ -420,8 +420,18 @@ export function assignCoordinationInState(state, seminaristaId, coordinationKey,
   }
 
   const validCoords = ['liturgia', 'cultura', 'cocina', 'servicios_generales'];
-  const coordinations = { ...(state.coordinations || { liturgia: [], cultura: [], cocina: [], servicios_generales: [] }) };
-  const coordinators = { ...(state.coordinators || { liturgia: null, cultura: null, cocina: null, servicios_generales: null }) };
+  const coordinations = {
+    liturgia: [...(state.coordinations?.liturgia || [])],
+    cultura: [...(state.coordinations?.cultura || [])],
+    cocina: [...(state.coordinations?.cocina || [])],
+    servicios_generales: [...(state.coordinations?.servicios_generales || [])]
+  };
+  const coordinators = {
+    liturgia: state.coordinators?.liturgia || null,
+    cultura: state.coordinators?.cultura || null,
+    cocina: state.coordinators?.cocina || null,
+    servicios_generales: state.coordinators?.servicios_generales || null
+  };
   const memberSubgroups = { ...(state.memberSubgroups || {}) };
 
   let prevCoord = null;
@@ -438,7 +448,7 @@ export function assignCoordinationInState(state, seminaristaId, coordinationKey,
   }
 
   if (validCoords.includes(coordinationKey)) {
-    coordinations[coordinationKey] = [...coordinations[coordinationKey], seminaristaId];
+    coordinations[coordinationKey] = [...(coordinations[coordinationKey] || []), seminaristaId];
   }
 
   const newState = {
@@ -460,8 +470,18 @@ export function setAreaCoordinatorInState(state, coordinationKey, seminaristaId,
   const validCoords = ['liturgia', 'cultura', 'cocina', 'servicios_generales'];
   if (!validCoords.includes(coordinationKey)) return state;
 
-  const coordinations = { ...(state.coordinations || { liturgia: [], cultura: [], cocina: [], servicios_generales: [] }) };
-  const coordinators = { ...(state.coordinators || { liturgia: null, cultura: null, cocina: null, servicios_generales: null }) };
+  const coordinations = {
+    liturgia: [...(state.coordinations?.liturgia || [])],
+    cultura: [...(state.coordinations?.cultura || [])],
+    cocina: [...(state.coordinations?.cocina || [])],
+    servicios_generales: [...(state.coordinations?.servicios_generales || [])]
+  };
+  const coordinators = {
+    liturgia: state.coordinators?.liturgia || null,
+    cultura: state.coordinators?.cultura || null,
+    cocina: state.coordinators?.cocina || null,
+    servicios_generales: state.coordinators?.servicios_generales || null
+  };
 
   if (!(coordinations[coordinationKey] || []).includes(seminaristaId)) {
     validCoords.forEach(k => {

@@ -169,6 +169,51 @@ export default function VoterMobile({ state, seminaristas = [], onUpdateState })
     );
   });
 
+  // If coordinations distribution in progress
+  if (state?.status === 'COORDINATIONS') {
+    return (
+      <div className="min-h-[85vh] flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-20 h-20 rounded-3xl bg-blue-500/20 border-2 border-blue-400/50 flex items-center justify-center text-blue-400 mb-6 shadow-[0_0_40px_rgba(59,130,246,0.3)]"
+        >
+          <Sparkles className="w-10 h-10 text-amber-400 animate-spin-slow" />
+        </motion.div>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-950/90 border border-blue-400/40 text-sky-300 text-xs font-mono font-bold uppercase tracking-widest mb-3">
+          Elección Concluida
+        </div>
+        <h2 className="text-3xl font-serif font-black text-white mb-2 gold-heading">
+          ¡Coordinador Electo!
+        </h2>
+        {state?.winner && (
+          <div className="p-4 rounded-2xl bg-[#050817] border border-amber-400/30 text-amber-300 max-w-sm mb-4 w-full">
+            <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-mono">Coordinador General 2026–2027</span>
+            <strong className="text-xl font-serif font-bold text-white block mt-0.5">{state.winner.nombre}</strong>
+            <span className="text-xs text-amber-400/80 font-mono">{state.winner.curso}</span>
+          </div>
+        )}
+        <p className="text-sm text-slate-300 max-w-sm leading-relaxed mb-6">
+          El Padre Rector y el Coordinador General están asignando los oficios y comisiones pastorales. Sigue los nombramientos en la pantalla principal.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
+          <a 
+            href="/tv" 
+            className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider text-center shadow-lg transition-all"
+          >
+            Ver Pantalla TV
+          </a>
+          <a 
+            href="/" 
+            className="w-full py-3 px-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-slate-300 font-medium text-xs text-center transition-all"
+          >
+            Volver al Inicio
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   // If voting not open
   if (!isRound1 && !isRound2) {
     return (

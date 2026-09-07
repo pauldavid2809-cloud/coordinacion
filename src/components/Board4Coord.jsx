@@ -109,20 +109,25 @@ export default function Board4Coord({
     }
   };
 
-  const coordinations = state?.coordinations || {
-    liturgia: [],
-    cultura: [],
-    cocina: [],
-    servicios_generales: []
+  const coordinations = {
+    liturgia: state?.coordinations?.liturgia || [],
+    cultura: state?.coordinations?.cultura || [],
+    cocina: state?.coordinations?.cocina || [],
+    servicios_generales: state?.coordinations?.servicios_generales || []
   };
-  const coordinators = state?.coordinators || {};
+  const coordinators = {
+    liturgia: state?.coordinators?.liturgia || null,
+    cultura: state?.coordinators?.cultura || null,
+    cocina: state?.coordinators?.cocina || null,
+    servicios_generales: state?.coordinators?.servicios_generales || null
+  };
   const generalCoordinatorId = state?.winner?.id;
 
   const assignedIds = new Set([
-    ...coordinations.liturgia,
-    ...coordinations.cultura,
-    ...coordinations.cocina,
-    ...coordinations.servicios_generales
+    ...(coordinations.liturgia || []),
+    ...(coordinations.cultura || []),
+    ...(coordinations.cocina || []),
+    ...(coordinations.servicios_generales || [])
   ]);
 
   const normalizeStr = (str) =>
