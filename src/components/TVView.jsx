@@ -37,10 +37,12 @@ export default function TVView({ state, seminaristas = [] }) {
   };
 
   const status = state?.status || 'CONFIG';
-  const candidates = state?.candidates || [];
-  const eligibleCourses = state?.eligibleCourses || ['2° de Teología', '3° de Teología'];
   const isRound1Voting = status === 'ROUND_1_VOTING';
   const isRound2Voting = status === 'ROUND_2_VOTING';
+  const candidates = isRound2Voting 
+    ? (state?.runoffCandidates?.length >= 2 ? state.runoffCandidates : state?.candidates || [])
+    : (state?.candidates || []);
+  const eligibleCourses = state?.eligibleCourses || ['2° de Teología', '3° de Teología'];
   const isSuspenseOrResults = status.includes('SUSPENSE') || status.includes('RESULTS');
   const isCoordinations = status === 'COORDINATIONS';
 
@@ -295,11 +297,11 @@ export default function TVView({ state, seminaristas = [] }) {
                   <div className="flex items-center gap-2">
                     <GraduationCap className="w-4 h-4 text-amber-400" />
                     <h2 className="text-sm sm:text-base font-serif font-black text-white">
-                      Candidatos Elegibles a Coordinador General
+                      {isRound2Voting ? 'Candidatos Finalistas (Segunda Vuelta • Balotaje)' : 'Candidatos Elegibles a Coordinador General'}
                     </h2>
                   </div>
                   <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-amber-300">
-                    {eligibleCourses.join(' • ') || 'Cursos Seleccionados'}
+                    {isRound2Voting ? '2 Finalistas' : (eligibleCourses.join(' • ') || 'Cursos Seleccionados')}
                   </span>
                 </div>
 

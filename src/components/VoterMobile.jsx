@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { socket } from '../utils/socket';
 import { soundEffects } from '../utils/soundEffects';
-import { castVoteInState } from '../utils/electionStore';
+import { castVoteInState, calculateResults } from '../utils/electionStore';
 import AvatarPlaceholder from './AvatarPlaceholder';
 import { 
   CheckCircle2, 
@@ -12,10 +12,10 @@ import {
   AlertCircle, 
   Sparkles, 
   Clock, 
-  ChevronRight,
-  Vote,
-  Fingerprint,
-  X
+  ChevronRight, 
+  Vote, 
+  Fingerprint, 
+  X 
 } from 'lucide-react';
 
 export default function VoterMobile({ state, seminaristas = [], onUpdateState }) {
@@ -26,22 +26,47 @@ export default function VoterMobile({ state, seminaristas = [], onUpdateState })
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [votedSuccess, setVotedSuccess] = useState(false);
+  const [votedRound, setVotedRound] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   const isRound1 = state?.status === 'ROUND_1_VOTING';
   const isRound2 = state?.status === 'ROUND_2_VOTING';
   const currentRound = isRound1 ? 1 : isRound2 ? 2 : 0;
 
-  const activeCandidates = isRound2 
-    ? (state?.runoffCandidates || []) 
-    : (state?.candidates || []);
+  // Compute active candidates: for Round 2 ensure 2 finalists even if not pre-cached
+  let activeCandidates = [];
+  if (isRound2) {
+    if (state?.runoffCandidates && state.runoffCandidates.length >= 2) {
+      activeCandidates = state.runoffCandidates;
+    } else {
+      const results = calculateResults(state?.round1Votes || {}, state?.candidates || []);
+      activeCandidates = results.tally.slice(0, 2);
+    }
+  } else {
+    activeCandidates = state?.candidates || [];
+  }
 
   const selectedVoter = seminaristas.find(s => s.id === selectedVoterId);
-  const hasVotedInCurrentRound = selectedVoterId && (
-    (isRound1 && state?.r1VotedIds?.includes(selectedVoterId)) ||
-    (isRound2 && state?.r2VotedIds?.includes(selectedVoterId))
+  const hasVotedInCurrentRound = !!selectedVoterId && (
+    (isRound1 && (
+      (state?.r1VotedIds && state.r1VotedIds.includes(selectedVoterId)) ||
+      (state?.round1Votes && state.round1Votes[selectedVoterId] !== undefined)
+    )) ||
+    (isRound2 && (
+      (state?.r2VotedIds && state.r2VotedIds.includes(selectedVoterId)) ||
+      (state?.round2Votes && state.round2Votes[selectedVoterId] !== undefined)
+    ))
   );
+
+  const isAlreadyVoted = (votedRound === currentRound && currentRound > 0) || hasVotedInCurrentRound;
+
+  // Reset candidate selection and round state whenever status or round changes
+  useEffect(() => {
+    setSelectedCandidateId(null);
+    setShowConfirmModal(false);
+    setErrorMsg('');
+    setVotedRound(null);
+  }, [state?.status, currentRound]);
 
   useEffect(() => {
     const savedVoterId = localStorage.getItem('seminario_voter_id');
@@ -122,7 +147,7 @@ export default function VoterMobile({ state, seminaristas = [], onUpdateState })
       );
 
       soundEffects.playSuccess();
-      setVotedSuccess(true);
+      setVotedRound(currentRound);
       setShowConfirmModal(false);
     } catch (err) {
       setErrorMsg('Error al registrar voto: ' + (err.message || 'Error de red'));
@@ -171,8 +196,8 @@ export default function VoterMobile({ state, seminaristas = [], onUpdateState })
     );
   }
 
-  // If already voted
-  if (votedSuccess || hasVotedInCurrentRound) {
+  // If already voted in this round
+  if (isAlreadyVoted) {
     return (
       <div className="min-h-[85vh] flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
         <motion.div 

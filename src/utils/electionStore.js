@@ -249,9 +249,16 @@ export function startRound2(state, onUpdateState) {
     socket.emit('election:start_round_2');
   }
 
+  let runoff = state.runoffCandidates;
+  if (!runoff || runoff.length < 2) {
+    const results = calculateResults(state.round1Votes || {}, state.candidates || []);
+    runoff = results.tally.slice(0, 2);
+  }
+
   const newState = {
     ...state,
     status: 'ROUND_2_VOTING',
+    runoffCandidates: runoff,
     round2Votes: {},
     r2VoteCount: 0,
     r2VotedIds: []
