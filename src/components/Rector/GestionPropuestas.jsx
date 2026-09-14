@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Lightbulb, Search, Clock, MessageSquare } from 'lucide-react';
 import BadgeEstado from '../Common/BadgeEstado';
 import { timeAgo, formatDateTime } from '../../utils/formatters';
-import { actualizarEstadoSolicitud } from '../../services/firestoreService';
+import { actualizarEstadoSolicitud } from '../../services/supabaseService.js';
 
 export default function GestionPropuestas({ solicitudes = [], onNotify }) {
   const [filtroEstado, setFiltroEstado] = useState('todos');

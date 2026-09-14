@@ -152,10 +152,45 @@ export function subscribeToSeminaristas(callback) {
   };
 }
 
+// Conjunto de suscriptores activos en memoria (dentro de la misma pestaña)
+const activeSolicitudSubscribers = new Set();
+
+// Canal de difusión entre pestañas del mismo navegador
+let bcSolicitudes = null;
+if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+  try {
+    bcSolicitudes = new BroadcastChannel('seminario_solicitudes_channel');
+    bcSolicitudes.onmessage = (event) => {
+      if (event.data?.type === 'SOLICITUDES_UPDATED' && Array.isArray(event.data.items)) {
+        setLocalCache(LOCAL_SOLICITUDES_KEY, event.data.items);
+        activeSolicitudSubscribers.forEach(cb => {
+          try { cb(event.data.items); } catch (e) { console.error(e); }
+        });
+      }
+    };
+  } catch (e) {
+    console.warn('BroadcastChannel no disponible:', e);
+  }
+}
+
+function notifySolicitudSubscribers(items) {
+  activeSolicitudSubscribers.forEach(cb => {
+    try { cb(items); } catch (e) { console.error(e); }
+  });
+  if (bcSolicitudes) {
+    try {
+      bcSolicitudes.postMessage({ type: 'SOLICITUDES_UPDATED', items });
+    } catch (e) {}
+  }
+}
+
 /**
  * Escucha y obtiene las solicitudes en tiempo real desde Supabase.
  */
 export function subscribeToSolicitudes(callback) {
+  activeSolicitudSubscribers.add(callback);
+
+  // 1. Enviar estado de caché inicial inmediatamente
   const cached = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
   callback(cached);
 
@@ -171,17 +206,18 @@ export function subscribeToSolicitudes(callback) {
       if (data) {
         const mapped = data.map(mapSolicitudFromDb);
         setLocalCache(LOCAL_SOLICITUDES_KEY, mapped);
-        callback(mapped);
+        notifySolicitudSubscribers(mapped);
       }
     } catch (err) {
       console.warn('Usando solicitudes en caché local:', err.message);
-      callback(getLocalCache(LOCAL_SOLICITUDES_KEY, []));
+      const localCurrent = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
+      callback(localCurrent);
     }
   };
 
   fetchSolicitudes();
 
-  // Suscripción Realtime en Supabase
+  // 2. Suscripción Realtime en Supabase
   const channel = supabase
     .channel('realtime-solicitudes')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'solicitudes' }, () => {
@@ -189,7 +225,30 @@ export function subscribeToSolicitudes(callback) {
     })
     .subscribe();
 
+  // 3. Polling periódico de seguridad (cada 3.5 segundos)
+  const intervalId = setInterval(fetchSolicitudes, 3500);
+
+  // 4. Escucha del evento storage entre pestañas
+  const onStorage = (e) => {
+    if (e.key === LOCAL_SOLICITUDES_KEY && e.newValue) {
+      try {
+        const fresh = JSON.parse(e.newValue);
+        if (Array.isArray(fresh)) {
+          callback(fresh);
+        }
+      } catch (err) {}
+    }
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', onStorage);
+  }
+
   return () => {
+    activeSolicitudSubscribers.delete(callback);
+    clearInterval(intervalId);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('storage', onStorage);
+    }
     supabase.removeChannel(channel);
   };
 }
@@ -208,9 +267,11 @@ export async function crearSolicitud(solicitudData) {
     fechaResolucion: null
   };
 
-  // Optimistic update en caché local
+  // Optimistic update en caché local y notificación a suscriptores
   const current = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
-  setLocalCache(LOCAL_SOLICITUDES_KEY, [nueva, ...current]);
+  const nextList = [nueva, ...current];
+  setLocalCache(LOCAL_SOLICITUDES_KEY, nextList);
+  notifySolicitudSubscribers(nextList);
 
   try {
     const dbPayload = mapSolicitudToDb(nueva);
@@ -238,7 +299,7 @@ export async function actualizarEstadoSolicitud(solicitudId, nuevoEstado, observ
     fecha_resolucion: new Date().toISOString()
   };
 
-  // Optimistic update
+  // Optimistic update y emisión inmediata a todas las pestañas/componentes
   const current = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
   const updated = current.map(item => item.id === solicitudId ? {
     ...item,
@@ -247,6 +308,7 @@ export async function actualizarEstadoSolicitud(solicitudId, nuevoEstado, observ
     fechaResolucion: updateData.fecha_resolucion
   } : item);
   setLocalCache(LOCAL_SOLICITUDES_KEY, updated);
+  notifySolicitudSubscribers(updated);
 
   try {
     const { error } = await supabase
@@ -300,7 +362,9 @@ export async function guardarSeminarista(seminarista) {
  */
 export async function eliminarSolicitud(solicitudId) {
   const current = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
-  setLocalCache(LOCAL_SOLICITUDES_KEY, current.filter(s => s.id !== solicitudId));
+  const nextList = current.filter(s => s.id !== solicitudId);
+  setLocalCache(LOCAL_SOLICITUDES_KEY, nextList);
+  notifySolicitudSubscribers(nextList);
 
   try {
     const { error } = await supabase

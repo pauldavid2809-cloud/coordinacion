@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Search, UserPlus, Edit2, Phone, GraduationCap, Church, X, Check, Save } from 'lucide-react';
-import { guardarSeminarista } from '../../services/firestoreService';
+import { guardarSeminarista } from '../../services/supabaseService.js';
 import { formatCedulaVenezolana } from '../../utils/formatters';
 
 const CURSOS_DISPONIBLES = [
