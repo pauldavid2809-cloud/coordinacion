@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Wrench, Send, X, AlertCircle } from 'lucide-react';
-import { crearSolicitud } from '../../services/firestoreService';
+import { crearSolicitud } from '../../services/supabaseService.js';
 
 const AREAS_COORDINACION = [
-  'Liturgia y Sacristía',
-  'Pastoral y Misiones',
-  'Música y Canto Litúrgico',
-  'Biblioteca y Estudio',
-  'Mantenimiento e Infraestructura',
-  'Alimentación y Cocina',
-  'Deportes y Recreación',
-  'Salud y Primeros Auxilios',
-  'Comunicaciones y Tecnología',
-  'Otra Coordinación'
+  'Servicios Generales',
+  'Liturgia',
+  'Cocina',
+  'Cultura'
 ];
 
 export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, onSuccess }) {

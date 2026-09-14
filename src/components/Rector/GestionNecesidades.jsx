@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Wrench, Search, Clock, CheckCircle, MessageSquare, AlertTriangle } from 'lucide-react';
-import BadgeEstado from '../Common/BadgeEstado';
-import { timeAgo, formatDateTime } from '../../utils/formatters';
-import { actualizarEstadoSolicitud } from '../../services/firestoreService';
+import BadgeEstado from '../Common/BadgeEstado.jsx';
+import { timeAgo, formatDateTime } from '../../utils/formatters.js';
+import { actualizarEstadoSolicitud } from '../../services/supabaseService.js';
 
 export default function GestionNecesidades({ solicitudes = [], onNotify }) {
   const [filtroEstado, setFiltroEstado] = useState('todos');
   const [filtroUrgencia, setFiltroUrgencia] = useState('todos');
+  const [filtroArea, setFiltroArea] = useState('todas');
   const [busqueda, setBusqueda] = useState('');
   
   const [editandoItem, setEditandoItem] = useState(null);
@@ -19,6 +20,7 @@ export default function GestionNecesidades({ solicitudes = [], onNotify }) {
   const necesidadesFiltradas = necesidades.filter(n => {
     if (filtroEstado !== 'todos' && n.estado !== filtroEstado) return false;
     if (filtroUrgencia !== 'todos' && n.urgencia !== filtroUrgencia) return false;
+    if (filtroArea !== 'todas' && n.area !== filtroArea) return false;
     if (busqueda.trim()) {
       const q = busqueda.toLowerCase();
       const sem = (n.seminaristaNombre || '').toLowerCase();
@@ -81,8 +83,19 @@ export default function GestionNecesidades({ solicitudes = [], onNotify }) {
           >
             <option value="todos">Toda urgencia</option>
             <option value="alta">Alta / Urgente</option>
-            <option value="media">Media</option>
             <option value="baja">Baja</option>
+          </select>
+
+          <select
+            value={filtroArea}
+            onChange={(e) => setFiltroArea(e.target.value)}
+            className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 border border-slate-200"
+          >
+            <option value="todas">Todas las coordinaciones</option>
+            <option value="Servicios Generales">Servicios Generales</option>
+            <option value="Liturgia">Liturgia</option>
+            <option value="Cocina">Cocina</option>
+            <option value="Cultura">Cultura</option>
           </select>
         </div>
       </div>

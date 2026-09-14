@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, FileText, Send, X, AlertCircle } from 'lucide-react';
-import { crearSolicitud } from '../../services/firestoreService';
+import { crearSolicitud } from '../../services/supabaseService.js';
 
 const TIPOS_PERMISO = [
   'Médico / Odontológico',
