@@ -15,8 +15,8 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-backdropFade">
-      <div className="bg-white rounded-3xl shadow-2xl border border-amber-500/40 w-full max-w-md overflow-hidden flex flex-col relative animate-modalIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm animate-backdropFade">
+      <div className="bg-slate-950 text-white w-full max-w-lg rounded-3xl shadow-2xl border border-amber-500/30 overflow-hidden flex flex-col max-h-[92vh] animate-modalIn">
         
         {/* Marca de agua / Decoración eclesiástica */}
         <div className="absolute -right-12 -top-12 opacity-5 pointer-events-none text-slate-900">

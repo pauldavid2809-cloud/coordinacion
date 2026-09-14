@@ -12,13 +12,13 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
 
   return (
     <>
-      <header className="bg-slate-900/98 text-white border-b border-amber-500/30 sticky top-0 z-40 shadow-lg backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
+      <header className="bg-slate-950 text-white border-b border-amber-500/30 sticky top-0 z-40 shadow-xl backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
             
             {/* Logo & Institución */}
             <div className="flex items-center space-x-2.5 sm:space-x-3.5 min-w-0 flex-1">
-              <div className="h-10 sm:h-14 w-auto flex items-center justify-center flex-shrink-0 py-0.5">
+              <div className="h-11 sm:h-14 w-auto flex items-center justify-center flex-shrink-0 py-0.5">
                 <img 
                   src="/logo.png" 
                   alt="Escudo Seminario Santo Tomás de Aquino - Sacerdos Lux" 
@@ -27,7 +27,7 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-display font-bold text-xs sm:text-base tracking-wider text-amber-100 truncate block">
+                  <span className="font-display font-bold text-xs sm:text-base tracking-wider text-amber-200 truncate block">
                     <span className="sm:hidden">Seminario Santo Tomás</span>
                     <span className="hidden sm:inline">Seminario Santo Tomás de Aquino</span>
                   </span>
