@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Calendar, 
   Wrench, 
@@ -8,27 +8,101 @@ import {
   FileText, 
   CheckCircle2, 
   AlertCircle, 
-  Share2, 
   Trash2, 
   Eye, 
   Plus, 
-  Filter 
+  Bell,
+  BellRing
 } from 'lucide-react';
-import BadgeEstado from '../Common/BadgeEstado';
-import SolicitudPermisoModal from './SolicitudPermisoModal';
-import SolicitudNecesidadModal from './SolicitudNecesidadModal';
-import SolicitudPropuestaModal from './SolicitudPropuestaModal';
-import PaseDigitalModal from './PaseDigitalModal';
-import { formatDateTime, timeAgo } from '../../utils/formatters';
-import { eliminarSolicitud } from '../../services/firestoreService';
+import BadgeEstado from '../Common/BadgeEstado.jsx';
+import SolicitudPermisoModal from './SolicitudPermisoModal.jsx';
+import SolicitudNecesidadModal from './SolicitudNecesidadModal.jsx';
+import SolicitudPropuestaModal from './SolicitudPropuestaModal.jsx';
+import PaseDigitalModal from './PaseDigitalModal.jsx';
+import { formatDateTime, timeAgo } from '../../utils/formatters.js';
+import { eliminarSolicitud } from '../../services/supabaseService.js';
+import { 
+  isPushSupported, 
+  getNotificationPermission, 
+  requestPushPermission, 
+  registerServiceWorker, 
+  triggerPushNotification 
+} from '../../utils/pushNotifications.js';
 
 export default function SeminaristaDashboard({ seminarista, solicitudes = [], onNotify }) {
   const [modalType, setModalType] = useState(null); // 'permiso' | 'necesidad' | 'propuesta'
   const [selectedPase, setSelectedPase] = useState(null);
   const [filtroTipo, setFiltroTipo] = useState('todos'); // 'todos' | 'permiso' | 'necesidad' | 'propuesta'
+  const [pushPermission, setPushPermission] = useState('default');
+
+  // Registrar Service Worker y verificar permiso de notificaciones push
+  useEffect(() => {
+    registerServiceWorker();
+    setPushPermission(getNotificationPermission());
+  }, []);
+
+  const handleActivarPush = async () => {
+    const granted = await requestPushPermission();
+    setPushPermission(getNotificationPermission());
+    if (granted && onNotify) {
+      onNotify('Notificaciones push activadas en este dispositivo.');
+    }
+  };
 
   // Filtrar solo las solicitudes de este seminarista
   const misSolicitudes = solicitudes.filter(s => s.seminaristaId === seminarista?.id);
+
+  // Detección en tiempo real de cambios de estado para disparar notificación push
+  const prevStatusesRef = useRef({});
+  const isInitialLoadRef = useRef(true);
+
+  useEffect(() => {
+    if (!misSolicitudes || misSolicitudes.length === 0) return;
+
+    if (isInitialLoadRef.current) {
+      // Guardar estados iniciales para evitar alertar sobre estados pasados
+      const map = {};
+      misSolicitudes.forEach(s => {
+        map[s.id] = s.estado;
+      });
+      prevStatusesRef.current = map;
+      isInitialLoadRef.current = false;
+      return;
+    }
+
+    // Comprobar si hubo algún cambio de estado desde la última actualización en tiempo real
+    misSolicitudes.forEach(s => {
+      const prevEstado = prevStatusesRef.current[s.id];
+      if (prevEstado && prevEstado !== s.estado) {
+        const esAprobado = s.estado === 'aprobado';
+        const esRechazado = s.estado === 'rechazado';
+
+        if (esAprobado || esRechazado) {
+          const titulo = esAprobado
+            ? '✅ Permiso APROBADO por Rectoría'
+            : '❌ Solicitud NO Aprobada';
+
+          const cuerpo = s.tipo === 'permiso'
+            ? `Tu permiso a "${s.destino || 'destino solicitado'}" ha sido ${esAprobado ? 'APROBADO' : 'RECHAZADO'}.${s.observacionRector ? ` Observación: "${s.observacionRector}"` : ''}`
+            : `Tu ${s.tipo} ha sido ${esAprobado ? 'aprobada' : 'revisada'}.${s.observacionRector ? ` Nota: "${s.observacionRector}"` : ''}`;
+
+          // Disparar Notificación Push nativa al dispositivo
+          triggerPushNotification({
+            title: titulo,
+            body: cuerpo,
+            tag: `sol-${s.id}-${s.estado}`,
+            url: '/'
+          });
+
+          if (onNotify) {
+            onNotify(cuerpo);
+          }
+        }
+      }
+      // Actualizar registro
+      prevStatusesRef.current[s.id] = s.estado;
+    });
+  }, [misSolicitudes, onNotify]);
 
   const solicitudesFiltradas = misSolicitudes.filter(s => {
     if (filtroTipo === 'todos') return true;
@@ -79,6 +153,32 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           </div>
         </div>
       </div>
+
+      {/* Banner de Notificaciones Push Nativas */}
+      {isPushSupported() && pushPermission !== 'granted' && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/15 to-amber-500/10 border border-amber-400/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center flex-shrink-0">
+              <BellRing className="w-5 h-5 text-amber-700 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                Activar Notificaciones Push en este dispositivo
+              </h4>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Recibe una notificación push inmediata en la pantalla de tu móvil o navegador cuando los formadores aprueben o rechacen tu permiso.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleActivarPush}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition-all whitespace-nowrap active:scale-95 flex items-center justify-center gap-2"
+          >
+            <Bell className="w-4 h-4" />
+            <span>Activar Notificaciones</span>
+          </button>
+        </div>
+      )}
 
       {/* Tres Acciones Principales */}
       <div>
