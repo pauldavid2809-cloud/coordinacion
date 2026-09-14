@@ -1,5 +1,20 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getDatabase, ref, set, update, get, onValue } from 'firebase/database';
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  setDoc, 
+  addDoc, 
+  getDocs, 
+  getDoc, 
+  updateDoc, 
+  deleteDoc, 
+  onSnapshot, 
+  query, 
+  where, 
+  orderBy, 
+  serverTimestamp 
+} from 'firebase/firestore';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyC2KrGxrrclqE1yJjy70d0HuF0R7ilPPcI",
@@ -12,7 +27,22 @@ export const firebaseConfig = {
 };
 
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const firestore = getFirestore(app);
 
-export { app, db, ref, set, update, get, onValue };
-
+export { 
+  app, 
+  firestore, 
+  collection, 
+  doc, 
+  setDoc, 
+  addDoc, 
+  getDocs, 
+  getDoc, 
+  updateDoc, 
+  deleteDoc, 
+  onSnapshot, 
+  query, 
+  where, 
+  orderBy, 
+  serverTimestamp 
+};

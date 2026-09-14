@@ -1,13 +1,14 @@
 @echo off
-title Sistema Electoral - Seminario Mayor Santo Tomas de Aquino
+title Sistema de Permisos y Coordinacion - Seminario Santo Tomas de Aquino
 color 0B
 cls
 echo ======================================================================
 echo    SEMINARIO MAYOR SANTO TOMAS DE AQUINO - ARQUIDIOCESIS DE MARACAIBO
-echo    SISTEMA ELECTORAL DE COORDINADORES EN TIEMPO REAL 2026-2027
+echo    SISTEMA DE PERMISOS, COORDINACION Y PROPUESTAS 2026-2027
 echo ======================================================================
 echo.
-echo Iniciando el servidor...
+echo Iniciando aplicacion web...
 echo.
-node server/index.js
+start http://localhost:5173
+npm run dev
 pause

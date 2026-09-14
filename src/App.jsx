@@ -1,380 +1,207 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { socket } from './utils/socket';
-import { db, ref, onValue, set } from './utils/firebase';
-import defaultSeminaristas from '../server/data/seminaristas.json';
-import defaultState from '../server/data/state.json';
-import HeaderBanner from './components/HeaderBanner';
-import TVView from './components/TVView';
-import TabletAdmin from './components/TabletAdmin';
-import VoterMobile from './components/VoterMobile';
-import VideoPlayerView from './components/VideoPlayerView';
-import { Tv, Tablet, Smartphone, Sparkles, ExternalLink, Wifi, Shield, Film } from 'lucide-react';
+import Navbar from './components/Common/Navbar';
+import LoginModal from './components/Auth/LoginModal';
+import SeminaristaDashboard from './components/Seminarista/SeminaristaDashboard';
+import RectorDashboard from './components/Rector/RectorDashboard';
+import ToastNotification from './components/Common/ToastNotification';
+import { getCurrentSession, logout } from './services/authService';
+import { subscribeToSeminaristas, subscribeToSolicitudes } from './services/firestoreService';
+import { 
+  Church, 
+  ShieldCheck, 
+  User, 
+  Calendar, 
+  Wrench, 
+  Lightbulb, 
+  CheckCircle2, 
+  ArrowRight,
+  Share2
+} from 'lucide-react';
 
 export default function App() {
-  const [electionState, setElectionState] = useState(() => {
-    try {
-      const saved = localStorage.getItem('coordinacion_election_state');
-      if (saved) return JSON.parse(saved);
-    } catch (e) {}
-    return defaultState;
-  });
-  const [seminaristas, setSeminaristas] = useState(defaultSeminaristas);
-  const [networkInfo, setNetworkInfo] = useState(null);
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [session, setSession] = useState(() => getCurrentSession());
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [loginInitialTab, setLoginInitialTab] = useState('seminarista');
+  const [seminaristas, setSeminaristas] = useState([]);
+  const [solicitudes, setSolicitudes] = useState([]);
+  const [toastMessage, setToastMessage] = useState('');
 
-  // Cross-tab and local storage real-time synchronization
+  // Suscripción a Firestore en tiempo real
   useEffect(() => {
-    const handleStorage = (e) => {
-      if (e.key === 'coordinacion_election_state' && e.newValue) {
-        try {
-          setElectionState(JSON.parse(e.newValue));
-        } catch (err) {}
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-
-    let bc = null;
-    try {
-      bc = new BroadcastChannel('coordinacion_election');
-      bc.onmessage = (event) => {
-        if (event.data) {
-          setElectionState(event.data);
-        }
-      };
-    } catch (e) {}
-
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-      if (bc) bc.close();
-    };
-  }, []);
-
-  useEffect(() => {
-    const handlePopState = () => setCurrentPath(window.location.pathname);
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  useEffect(() => {
-    // 1. Fetch seminaristas safely
-    fetch('/api/seminaristas')
-      .then(res => {
-        if (!res.ok) throw new Error('API response not OK');
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
-        return res.json();
-      })
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) setSeminaristas(data);
-      })
-      .catch(() => {
-        // Fallback to defaultSeminaristas already loaded
-      });
-
-    // 2. Fetch network info safely
-    fetch('/api/network-info')
-      .then(res => {
-        if (!res.ok) throw new Error('Network info not OK');
-        return res.json();
-      })
-      .then(data => setNetworkInfo(data))
-      .catch(() => {});
-
-    // 3. Fetch state via REST fallback safely
-    fetch('/api/state')
-      .then(res => {
-        if (!res.ok) throw new Error('State response not OK');
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
-        return res.json();
-      })
-      .then(data => {
-        if (data && !data.error && data.status) setElectionState(data);
-      })
-      .catch(() => {});
-
-    // 4. Firebase Realtime Database live cross-device sync (Single Source of Truth on Vercel)
-    let unsubscribeFirebase = null;
-    try {
-      const stateRef = ref(db, 'election/state');
-      unsubscribeFirebase = onValue(stateRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.status) {
-          const r1Votes = data.round1Votes || {};
-          const r2Votes = data.round2Votes || {};
-          const r1VotedIds = Object.keys(r1Votes);
-          const r2VotedIds = Object.keys(r2Votes);
-
-          setElectionState(prev => {
-            const prevCoords = prev?.coordinations || {};
-            const incomingCoords = data?.coordinations || {};
-            const prevCoordinators = prev?.coordinators || {};
-            const incomingCoordinators = data?.coordinators || {};
-
-            return {
-              ...prev,
-              ...data,
-              round1Votes: r1Votes,
-              round2Votes: r2Votes,
-              r1VoteCount: r1VotedIds.length,
-              r2VoteCount: r2VotedIds.length,
-              r1VotedIds,
-              r2VotedIds,
-              selectedCandidateIds: data.selectedCandidateIds || (data.candidates || []).map(c => c.id),
-              coordinations: {
-                liturgia: incomingCoords.liturgia || prevCoords.liturgia || [],
-                cultura: incomingCoords.cultura || prevCoords.cultura || [],
-                cocina: incomingCoords.cocina || prevCoords.cocina || [],
-                servicios_generales: incomingCoords.servicios_generales || prevCoords.servicios_generales || []
-              },
-              coordinators: {
-                liturgia: incomingCoordinators.liturgia ?? prevCoordinators.liturgia ?? null,
-                cultura: incomingCoordinators.cultura ?? prevCoordinators.cultura ?? null,
-                cocina: incomingCoordinators.cocina ?? prevCoordinators.cocina ?? null,
-                servicios_generales: incomingCoordinators.servicios_generales ?? prevCoordinators.servicios_generales ?? null
-              },
-              subgroups: data.subgroups || prev?.subgroups || defaultState.subgroups,
-              memberSubgroups: data.memberSubgroups || prev?.memberSubgroups || {}
-            };
-          });
-        } else if (data === null) {
-          // Initialize Firebase with default state on first run
-          set(stateRef, defaultState).catch(() => {});
-        }
-      }, (err) => {
-        console.warn('Firebase onValue error:', err);
-      });
-    } catch (err) {
-      console.warn('Firebase setup error:', err);
-    }
-
-    // 5. WebSocket handlers (for local network high-speed sync)
-    const handleState = (newState) => {
-      setElectionState(newState);
-    };
-
-    socket.on('election:state', handleState);
-    socket.on('connect', () => {
-      socket.emit('election:get_state');
+    const unsubSem = subscribeToSeminaristas((list) => {
+      setSeminaristas(list);
     });
 
-    if (socket.connected) {
-      socket.emit('election:get_state');
-    }
+    const unsubSol = subscribeToSolicitudes((items) => {
+      setSolicitudes(items);
+    });
 
     return () => {
-      socket.off('election:state', handleState);
-      socket.off('connect');
-      if (typeof unsubscribeFirebase === 'function') {
-        unsubscribeFirebase();
-      }
+      if (unsubSem) unsubSem();
+      if (unsubSol) unsubSol();
     };
   }, []);
 
-  const navigateTo = (path) => {
-    window.history.pushState({}, '', path);
-    setCurrentPath(path);
+  const handleLogout = () => {
+    logout();
+    setSession(null);
+    setToastMessage('Sesión cerrada correctamente.');
   };
 
-  const cleanPath = (currentPath || '/').replace(/\/+$/, '') || '/';
-  const isTV = cleanPath === '/tv';
-  const isAdmin = cleanPath === '/admin' || cleanPath === '/padre';
-  const isVoter = cleanPath === '/votar';
-  const isVideo = cleanPath === '/video';
+  const handleLoginSuccess = (newSession) => {
+    setSession(newSession);
+    setToastMessage(`Bienvenido, ${newSession.user?.nombre || 'Usuario'}.`);
+  };
 
-  const isLockedScreen = isTV || isAdmin;
+  const abrirLogin = (tab = 'seminarista') => {
+    setLoginInitialTab(tab);
+    setIsLoginOpen(true);
+  };
 
   return (
-    <div className={`${isLockedScreen ? 'h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-[100dvh]'} flex flex-col bg-[#040714] text-slate-100 selection:bg-amber-400 selection:text-slate-950 relative overflow-x-hidden`}>
-      {/* Top Banner - Omitted on TV and Admin for dedicated fullscreen ergonomics */}
-      {!isLockedScreen && (
-        <HeaderBanner 
-          role={isVoter ? 'voter' : isVideo ? 'video' : 'portal'} 
-          status={electionState?.status || 'CONFIG'} 
-        />
-      )}
+    <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800 antialiased selection:bg-amber-500 selection:text-white">
+      
+      {/* Barra de Navegación Institucional */}
+      <Navbar
+        session={session}
+        onLogout={handleLogout}
+        onOpenLogin={() => abrirLogin('seminarista')}
+      />
 
-      {/* Main Content */}
-      <main className={`flex-1 flex flex-col relative z-10 ${isLockedScreen ? 'min-h-0 overflow-hidden' : ''}`}>
-        {isTV ? (
-          <div key="tv" className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-            <TVView 
-              state={electionState} 
-              seminaristas={seminaristas} 
-              networkInfo={networkInfo} 
-              onUpdateState={setElectionState}
-            />
-          </div>
-        ) : isAdmin ? (
-          <div key="admin" className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
-            <TabletAdmin 
-              state={electionState} 
-              seminaristas={seminaristas} 
-              networkInfo={networkInfo} 
-              onUpdateState={setElectionState}
-            />
-          </div>
-        ) : isVoter ? (
-          <div key="voter" className="flex-1 flex flex-col">
-            <VoterMobile 
-              state={electionState} 
-              seminaristas={seminaristas} 
-              onUpdateState={setElectionState}
-            />
-          </div>
-        ) : isVideo ? (
-          <div key="video" className="flex-1 flex flex-col">
-            <VideoPlayerView onBack={() => navigateTo('/')} />
-          </div>
+      {/* Contenido Principal */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {session?.role === 'rector' ? (
+          <RectorDashboard
+            solicitudes={solicitudes}
+            seminaristas={seminaristas}
+            onNotify={(msg) => setToastMessage(msg)}
+          />
+        ) : session?.role === 'seminarista' ? (
+          <SeminaristaDashboard
+            seminarista={session.user}
+            solicitudes={solicitudes}
+            onNotify={(msg) => setToastMessage(msg)}
+          />
         ) : (
-          <div
-            key="portal"
-            className="max-w-6xl mx-auto p-4 sm:p-10 my-auto text-center space-y-10"
-          >
-            {/* Sacred Crest & Title */}
-            <div className="space-y-4">
-              <div className="relative inline-block">
-                <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-2xl animate-pulse"></div>
-                <img 
-                  src="/logo.png" 
-                  alt="Escudo del Seminario" 
-                  className="relative w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain drop-shadow-[0_0_35px_rgba(251,191,36,0.5)]" 
-                />
-              </div>
+          /* Pantalla de Bienvenida / Acceso Rápido para Invitados */
+          <div className="max-w-4xl mx-auto space-y-8 py-4 sm:py-8 animate-fadeIn">
+            
+            {/* Hero Principal */}
+            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-3xl p-8 sm:p-12 text-white border border-amber-500/30 shadow-2xl text-center relative overflow-hidden">
+              <div className="relative z-10 space-y-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-amber-500/20 border-2 border-amber-400/40 text-amber-300 flex items-center justify-center shadow-inner">
+                  <Church className="w-9 h-9 sm:w-11 sm:h-11" />
+                </div>
+                
+                <h1 className="font-serif font-black text-2xl sm:text-4xl text-amber-100 tracking-tight leading-tight">
+                  Seminario Mayor Santo Tomás de Aquino
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-300 font-light max-w-xl mx-auto">
+                  Arquidiócesis de Maracaibo • Sistema Oficial de Permisos, Necesidades de Coordinación y Propuestas Comunitarias 2026-2027
+                </p>
 
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-950/80 border border-amber-400/40 text-amber-300 text-xs font-mono font-bold uppercase tracking-widest">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Curso Formativo 2026–2027</span>
-              </div>
+                {/* Botones de Acceso Rápido */}
+                <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    onClick={() => abrirLogin('seminarista')}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-900/30 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Ingresar con Cédula (Seminaristas)</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
 
-              <h1 className="text-4xl sm:text-6xl font-serif font-black text-white tracking-tight gold-heading">
-                Seminario Mayor Santo Tomás de Aquino
-              </h1>
-              <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-                Sistema de Transmisión Electoral y Tablero Pastoral de Coordinaciones en Tiempo Real.
-              </p>
+                  <button
+                    onClick={() => abrirLogin('rector')}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-amber-400" />
+                    <span>Acceso de Rectoría</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Roles Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
-              {/* TV */}
-              <motion.div
-                whileHover={{ y: -6, scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                onClick={() => navigateTo('/tv')}
-                className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-amber-500/30"
+            {/* Tres Pilares del Sistema */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+              <div 
+                onClick={() => abrirLogin('seminarista')}
+                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                  <Tv className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform border border-amber-200">
+                  <Calendar className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-amber-300 transition-colors">
-                    Pantalla Televisor
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Arena de transmisión para el salón: medidor de votos en vivo, modo suspenso y tablero pastoral.
-                  </p>
-                </div>
-                <div className="pt-2 text-xs font-mono font-bold text-amber-400 inline-flex items-center gap-1.5">
-                  <span>Abrir Pantalla</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </div>
-              </motion.div>
+                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-amber-700 transition-colors">
+                  Permisos de Salida
+                </h3>
+                <p className="text-xs text-slate-600 mt-1">
+                  Petición y resolución formal de salidas médicas, familiares y pastorales con pase digital oficial y código para WhatsApp.
+                </p>
+              </div>
 
-              {/* Tablet Padre */}
-              <motion.div
-                whileHover={{ y: -6, scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                onClick={() => navigateTo('/admin')}
-                className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-sky-500/30"
+              <div 
+                onClick={() => abrirLogin('seminarista')}
+                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-400/40 text-sky-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                  <Tablet className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform border border-sky-200">
+                  <Wrench className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-sky-300 transition-colors">
-                    Tablet del Padre Rector
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Centro de mando: sube fotos, abre/cierra votaciones y asigna a los seminaristas en tiempo real.
-                  </p>
-                </div>
-                <div className="pt-2 text-xs font-mono font-bold text-sky-400 inline-flex items-center gap-1.5">
-                  <span>Abrir Consola</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </div>
-              </motion.div>
+                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-sky-700 transition-colors">
+                  Necesidades de Coordinación
+                </h3>
+                <p className="text-xs text-slate-600 mt-1">
+                  Reportes de insumos, reparaciones y materiales para liturgia, música, biblioteca y áreas de la casa de formación.
+                </p>
+              </div>
 
-              {/* Mobile Voter */}
-              <motion.div
-                whileHover={{ y: -6, scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                onClick={() => navigateTo('/votar')}
-                className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-emerald-500/30"
+              <div 
+                onClick={() => abrirLogin('seminarista')}
+                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                  <Smartphone className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform border border-indigo-200">
+                  <Lightbulb className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-emerald-300 transition-colors">
-                    Móvil Seminarista
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Tarjetón secreto para los hermanos votantes: validación por Cédula de Identidad oficial.
-                  </p>
-                </div>
-                <div className="pt-2 text-xs font-mono font-bold text-emerald-400 inline-flex items-center gap-1.5">
-                  <span>Ir a Votar</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </div>
-              </motion.div>
+                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-indigo-700 transition-colors">
+                  Propuestas Formativas
+                </h3>
+                <p className="text-xs text-slate-600 mt-1">
+                  Iniciativas comunitarias, apostólicas y recreativas para edificar la fraternidad y enriquecer la formación sacerdotal.
+                </p>
+              </div>
 
-              {/* WhatsApp Video Guide */}
-              <motion.div
-                whileHover={{ y: -6, scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                onClick={() => navigateTo('/video')}
-                className="card-senior group p-6 rounded-3xl text-center space-y-4 cursor-pointer shadow-2xl border-purple-500/30 bg-purple-950/10"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-400/40 text-purple-300 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                  <Film className="w-7 h-7" />
-                </div>
-                <div>
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-white group-hover:text-purple-300 transition-colors">
-                    Guía en Video
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                    Animación 9:16 para WhatsApp: paso a paso para votar, búsqueda sin tildes y pantalla TV.
-                  </p>
-                </div>
-                <div className="pt-2 text-xs font-mono font-bold text-purple-400 inline-flex items-center gap-1.5">
-                  <span>Ver Video</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </div>
-              </motion.div>
             </div>
 
-            {/* Network IP pill */}
-            {networkInfo && (
-              <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-[#050817] border border-white/[0.08] text-xs text-slate-300 font-mono shadow-md">
-                <Wifi className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span>Enlace de red local para enviar: <strong className="text-amber-300">{networkInfo.voteUrl}</strong></span>
-              </div>
-            )}
           </div>
         )}
       </main>
 
-      {!isLockedScreen && (
-        <footer className="w-full py-4 px-6 border-t border-white/[0.06] text-center text-xs text-slate-500 font-mono">
-          Arquidiócesis de Maracaibo • Seminario Mayor Santo Tomás de Aquino • Sacerdos Lux
-        </footer>
-      )}
+      {/* Pie de Página Institucional */}
+      <footer className="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 space-y-1">
+          <p className="font-serif font-bold text-slate-700">
+            Seminario Mayor Arquidiocesano Santo Tomás de Aquino
+          </p>
+          <p className="text-[11px] text-slate-400">
+            Arquidiócesis de Maracaibo, Venezuela • Padrón Oficial 2026-2027
+          </p>
+        </div>
+      </footer>
+
+      {/* Modal de Autenticación */}
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        seminaristas={seminaristas}
+      />
+
+      {/* Notificaciones Flotantes */}
+      <ToastNotification
+        message={toastMessage}
+        onClose={() => setToastMessage('')}
+      />
+
     </div>
   );
 }
