@@ -57,7 +57,7 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
                 <button
                   onClick={onLogout}
                   title="Cerrar sesión"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-200 border border-slate-700 hover:border-rose-700/50 transition-all text-xs font-semibold"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-rose-900/60 text-slate-300 hover:text-rose-200 border border-slate-700 hover:border-rose-700/50 btn-tactile text-xs font-semibold"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Salir</span>
@@ -66,7 +66,7 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
             ) : (
               <button
                 onClick={onOpenLogin}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs sm:text-sm shadow-md btn-tactile"
               >
                 <User className="w-4 h-4" />
                 <span>Ingresar</span>

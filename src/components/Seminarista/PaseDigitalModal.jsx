@@ -15,8 +15,8 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-2xl border border-amber-500/40 w-full max-w-md overflow-hidden flex flex-col relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm animate-backdropFade">
+      <div className="bg-white rounded-3xl shadow-2xl border border-amber-500/40 w-full max-w-md overflow-hidden flex flex-col relative animate-modalIn">
         
         {/* Marca de agua / Decoración eclesiástica */}
         <div className="absolute -right-12 -top-12 opacity-5 pointer-events-none text-slate-900">
@@ -27,7 +27,7 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-5 text-white text-center border-b-2 border-amber-500 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg transition-colors"
+            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg btn-tactile"
           >
             <X className="w-5 h-5" />
           </button>
@@ -136,14 +136,14 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
         <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center gap-2">
           <button
             onClick={handleShareWhatsApp}
-            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95"
+            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2"
           >
             <Share2 className="w-4 h-4" />
             <span>Compartir por WhatsApp</span>
           </button>
           <button
             onClick={onClose}
-            className="w-full sm:w-auto py-3 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs hover:bg-white transition-colors"
+            className="w-full sm:w-auto py-3 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs hover:bg-white btn-tactile"
           >
             Cerrar
           </button>

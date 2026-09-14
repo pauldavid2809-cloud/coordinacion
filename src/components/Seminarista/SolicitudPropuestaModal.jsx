@@ -60,8 +60,8 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-backdropFade">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col animate-modalIn">
         
         {/* Cabecera */}
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white flex items-center justify-between border-b border-indigo-500/20">
@@ -80,7 +80,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg"
+            className="text-slate-400 hover:text-white btn-tactile p-1 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -89,7 +89,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 animate-slideDown">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -105,7 +105,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Ej. Taller de Canto Gregoriano / Jornada de Mantenimiento Parroquial"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -116,7 +116,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
             <select
               value={dimension}
               onChange={(e) => setDimension(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 bg-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150"
             >
               {DIMENSIONES.map(d => (
                 <option key={d} value={d}>{d}</option>
@@ -134,7 +134,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               rows={2}
               placeholder="¿Por qué es conveniente o necesaria esta iniciativa? ¿A quiénes beneficiará?"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -148,7 +148,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               rows={3}
               placeholder="Describe cómo se llevaría a cabo, qué recursos se requieren, fechas tentativas..."
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -157,14 +157,14 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{loading ? 'Enviando...' : 'Enviar Propuesta'}</span>

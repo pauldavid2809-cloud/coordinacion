@@ -53,8 +53,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden transform transition-all">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-backdropFade">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-modalIn">
         
         {/* Cabecera del modal */}
         <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 p-6 text-white text-center relative border-b border-amber-500/20">
@@ -78,7 +78,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
           <button
             type="button"
             onClick={() => { setActiveTab('seminarista'); setError(''); }}
-            className={`flex-1 py-3.5 text-xs font-bold transition-all flex items-center justify-center gap-2 border-b-2 ${
+            className={`flex-1 py-3.5 text-xs font-bold btn-tactile flex items-center justify-center gap-2 border-b-2 ${
               activeTab === 'seminarista'
                 ? 'border-amber-600 text-amber-700 bg-white shadow-sm'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -90,7 +90,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
           <button
             type="button"
             onClick={() => { setActiveTab('rector'); setError(''); }}
-            className={`flex-1 py-3.5 text-xs font-bold transition-all flex items-center justify-center gap-2 border-b-2 ${
+            className={`flex-1 py-3.5 text-xs font-bold btn-tactile flex items-center justify-center gap-2 border-b-2 ${
               activeTab === 'rector'
                 ? 'border-slate-800 text-slate-900 bg-white shadow-sm'
                 : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -104,7 +104,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
         {/* Cuerpo del formulario */}
         <div className="p-6">
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2 animate-slideDown">
               <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -124,7 +124,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
                     placeholder="Ej. 30.413.000 o 30413000"
                     autoFocus
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-slate-900 font-medium text-sm transition-all placeholder:text-slate-400"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-slate-900 font-medium text-sm transition-[border-color,box-shadow] duration-150 placeholder:text-slate-400"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
@@ -134,7 +134,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
 
               {/* Reconocimiento automático si coincide */}
               {matchedSeminarista && (
-                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2 animate-fadeIn">
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2 animate-slideDown">
                   <CheckCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
                   <div>
                     <span className="font-bold">{matchedSeminarista.nombreCompleto || matchedSeminarista.nombre}</span>
@@ -146,7 +146,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
               <button
                 type="submit"
                 disabled={loading || !cedulaInput.trim()}
-                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-sm shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <span>Entrar al Portal</span>
                 <ArrowRight className="w-4 h-4" />
@@ -166,12 +166,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
                     placeholder="Ingresa la clave maestra"
                     autoFocus
                     required
-                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-700 focus:border-slate-700 text-slate-900 font-medium text-sm transition-all"
+                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-700 focus:border-slate-700 text-slate-900 font-medium text-sm transition-[border-color,box-shadow] duration-150"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 btn-tactile p-1 rounded-lg"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -184,7 +184,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
               <button
                 type="submit"
                 disabled={loading || !claveInput.trim()}
-                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 text-white font-bold text-sm shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <KeyRound className="w-4 h-4 text-amber-400" />
                 <span>Acceder a Rectoría</span>
@@ -197,7 +197,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
             <button
               type="button"
               onClick={onClose}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              className="text-xs text-slate-400 hover:text-slate-600 btn-tactile px-3 py-1.5 rounded-lg"
             >
               Cancelar
             </button>

@@ -54,8 +54,8 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-backdropFade">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col animate-modalIn">
         
         {/* Cabecera */}
         <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white flex items-center justify-between border-b border-sky-500/20">
@@ -74,7 +74,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg"
+            className="text-slate-400 hover:text-white btn-tactile p-1 rounded-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -83,7 +83,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
           {error && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 animate-slideDown">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -96,7 +96,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
             <select
               value={area}
               onChange={(e) => setArea(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 bg-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150"
             >
               {AREAS_COORDINACION.map(a => (
                 <option key={a} value={a}>{a}</option>
@@ -118,7 +118,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
                   key={u.id}
                   type="button"
                   onClick={() => setUrgencia(u.id)}
-                  className={`py-2 px-2 text-center rounded-xl text-xs font-bold border-2 transition-all ${
+                  className={`py-2 px-2 text-center rounded-xl text-xs font-bold border-2 chip-tactile ${
                     urgencia === u.id
                       ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                       : `${u.color} bg-white`
@@ -140,7 +140,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
               rows={4}
               placeholder="Detalla qué material se necesita, qué elemento requiere reparación o qué situación debe coordinarse..."
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -149,14 +149,14 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{loading ? 'Enviando...' : 'Enviar Necesidad'}</span>

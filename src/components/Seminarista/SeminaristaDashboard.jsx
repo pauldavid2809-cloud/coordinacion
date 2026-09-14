@@ -172,7 +172,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           </div>
           <button
             onClick={handleActivarPush}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition-all whitespace-nowrap active:scale-95 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md btn-tactile whitespace-nowrap flex items-center justify-center gap-2"
           >
             <Bell className="w-4 h-4" />
             <span>Activar Notificaciones</span>
@@ -191,10 +191,10 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           {/* Opción 1: Solicitar Permiso */}
           <div 
             onClick={() => setModalType('permiso')}
-            className="group cursor-pointer bg-white rounded-2xl p-5 border border-amber-200/80 hover:border-amber-400 shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex flex-col justify-between"
+            className="group cursor-pointer bg-white rounded-2xl p-5 border border-amber-200/80 hover:border-amber-400 shadow-sm hover:shadow-md card-tactile flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-amber-500/20">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-amber-500/20">
                 <Calendar className="w-6 h-6" />
               </div>
               <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-amber-700 transition-colors">
@@ -213,10 +213,10 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           {/* Opción 2: Necesidad de Coordinación */}
           <div 
             onClick={() => setModalType('necesidad')}
-            className="group cursor-pointer bg-white rounded-2xl p-5 border border-sky-200/80 hover:border-sky-400 shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex flex-col justify-between"
+            className="group cursor-pointer bg-white rounded-2xl p-5 border border-sky-200/80 hover:border-sky-400 shadow-sm hover:shadow-md card-tactile flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-sky-500/15 text-sky-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-sky-500/20">
+              <div className="w-12 h-12 rounded-xl bg-sky-500/15 text-sky-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-sky-500/20">
                 <Wrench className="w-6 h-6" />
               </div>
               <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-sky-700 transition-colors">
@@ -235,10 +235,10 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           {/* Opción 3: Propuesta */}
           <div 
             onClick={() => setModalType('propuesta')}
-            className="group cursor-pointer bg-white rounded-2xl p-5 border border-indigo-200/80 hover:border-indigo-400 shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex flex-col justify-between"
+            className="group cursor-pointer bg-white rounded-2xl p-5 border border-indigo-200/80 hover:border-indigo-400 shadow-sm hover:shadow-md card-tactile flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/15 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform border border-indigo-500/20">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/15 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-indigo-500/20">
                 <Lightbulb className="w-6 h-6" />
               </div>
               <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-indigo-700 transition-colors">
@@ -280,7 +280,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
               <button
                 key={f.id}
                 onClick={() => setFiltroTipo(f.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap chip-tactile ${
                   filtroTipo === f.id
                     ? 'bg-slate-900 text-white shadow-sm'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -311,7 +311,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
               return (
                 <div 
                   key={item.id}
-                  className="p-4 rounded-2xl border border-slate-200/90 hover:border-slate-300 transition-all bg-white hover:bg-slate-50/50 flex flex-col gap-3"
+                  className="p-4 rounded-2xl border border-slate-200/90 hover:border-slate-300 transition-[border-color,background-color] duration-150 bg-white hover:bg-slate-50/50 flex flex-col gap-3 stagger-item"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
@@ -397,7 +397,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                       {isPermiso && isAprobado && (
                         <button
                           onClick={() => setSelectedPase(item)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm btn-tactile"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Ver Pase Digital Autorizado</span>
@@ -408,7 +408,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                     {isPendiente && (
                       <button
                         onClick={() => handleEliminar(item.id)}
-                        className="text-xs text-slate-400 hover:text-rose-600 transition-colors flex items-center gap-1"
+                        className="text-xs text-slate-400 hover:text-rose-600 btn-tactile flex items-center gap-1 p-1 rounded-lg"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Cancelar</span>

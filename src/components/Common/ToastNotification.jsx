@@ -13,7 +13,7 @@ export default function ToastNotification({ message, type = 'success', onClose }
   if (!message) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 animate-slideUp max-w-sm">
+    <div className="fixed bottom-5 right-5 z-50 animate-toastIn max-w-sm">
       <div className={`p-4 rounded-2xl shadow-xl border flex items-center gap-3 ${
         type === 'error'
           ? 'bg-rose-900 text-white border-rose-700'
@@ -27,7 +27,7 @@ export default function ToastNotification({ message, type = 'success', onClose }
         <p className="text-xs font-medium flex-1">{message}</p>
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white p-1"
+          className="text-slate-400 hover:text-white p-1 rounded-lg btn-tactile"
         >
           <X className="w-4 h-4" />
         </button>

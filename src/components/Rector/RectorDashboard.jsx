@@ -60,7 +60,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
         {/* Permisos */}
         <div 
           onClick={() => setActiveTab('permisos')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+          className={`p-4 rounded-2xl border cursor-pointer bg-white shadow-sm hover:shadow-md card-tactile ${
             activeTab === 'permisos' ? 'border-amber-500 ring-2 ring-amber-400/30' : 'border-slate-200'
           }`}
         >
@@ -77,7 +77,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
         {/* Necesidades */}
         <div 
           onClick={() => setActiveTab('necesidades')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+          className={`p-4 rounded-2xl border cursor-pointer bg-white shadow-sm hover:shadow-md card-tactile ${
             activeTab === 'necesidades' ? 'border-sky-500 ring-2 ring-sky-400/30' : 'border-slate-200'
           }`}
         >
@@ -100,7 +100,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
         {/* Propuestas */}
         <div 
           onClick={() => setActiveTab('propuestas')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+          className={`p-4 rounded-2xl border cursor-pointer bg-white shadow-sm hover:shadow-md card-tactile ${
             activeTab === 'propuestas' ? 'border-indigo-500 ring-2 ring-indigo-400/30' : 'border-slate-200'
           }`}
         >
@@ -117,7 +117,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
         {/* Padrón */}
         <div 
           onClick={() => setActiveTab('padron')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${
+          className={`p-4 rounded-2xl border cursor-pointer bg-white shadow-sm hover:shadow-md card-tactile ${
             activeTab === 'padron' ? 'border-slate-800 ring-2 ring-slate-400/30' : 'border-slate-200'
           }`}
         >
@@ -137,7 +137,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
       <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-2">
         <button
           onClick={() => setActiveTab('permisos')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap btn-tactile ${
             activeTab === 'permisos'
               ? 'bg-slate-900 text-white shadow-md'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -154,7 +154,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
 
         <button
           onClick={() => setActiveTab('necesidades')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap btn-tactile ${
             activeTab === 'necesidades'
               ? 'bg-slate-900 text-white shadow-md'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -171,7 +171,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
 
         <button
           onClick={() => setActiveTab('propuestas')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap btn-tactile ${
             activeTab === 'propuestas'
               ? 'bg-slate-900 text-white shadow-md'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -183,7 +183,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
 
         <button
           onClick={() => setActiveTab('padron')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap btn-tactile ${
             activeTab === 'padron'
               ? 'bg-slate-900 text-white shadow-md'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'

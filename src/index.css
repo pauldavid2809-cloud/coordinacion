@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Emil Kowalski Design Engineering Easing Tokens */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  }
+
   body {
     @apply bg-slate-100 text-slate-800 antialiased font-sans min-h-[100dvh];
     background-color: #f1f5f9;
@@ -13,22 +21,168 @@
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+/* ==========================================================================
+   Emil Kowalski Animation System: Snappy, purposeful, hardware-accelerated
+   ========================================================================== */
+
+/* Backdrop Fade: 180ms */
+@keyframes backdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Modal Dialog Scale: Starts from scale(0.96), never scale(0) */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Dropdown / Popover Scale: Origin-aware entering */
+@keyframes popoverIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide Down (for accordions, inline menus, alert banners) */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Toast Enter: Snappy slide up with slight scale */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Stagger Item for Lists */
+@keyframes listStagger {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation Utilities */
+.animate-backdropFade {
+  animation: backdropFade 180ms var(--ease-out) forwards;
+}
+
+.animate-modalIn {
+  animation: modalIn 200ms var(--ease-out) forwards;
+  transform-origin: center;
+}
+
+.animate-popoverIn {
+  animation: popoverIn 160ms var(--ease-out) forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 180ms var(--ease-out) forwards;
+}
+
+.animate-toastIn {
+  animation: toastIn 220ms var(--ease-out) forwards;
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: backdropFade 180ms var(--ease-out) forwards;
 }
 
 .animate-slideUp {
-  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: toastIn 220ms var(--ease-out) forwards;
+}
+
+/* Stagger List delays (30ms - 200ms) */
+.stagger-item {
+  animation: listStagger 220ms var(--ease-out) backwards;
+}
+.stagger-item:nth-child(1) { animation-delay: 20ms; }
+.stagger-item:nth-child(2) { animation-delay: 45ms; }
+.stagger-item:nth-child(3) { animation-delay: 70ms; }
+.stagger-item:nth-child(4) { animation-delay: 95ms; }
+.stagger-item:nth-child(5) { animation-delay: 120ms; }
+.stagger-item:nth-child(6) { animation-delay: 145ms; }
+.stagger-item:nth-child(7) { animation-delay: 170ms; }
+.stagger-item:nth-child(8) { animation-delay: 195ms; }
+
+/* ==========================================================================
+   Tactile Interaction Utilities
+   ========================================================================== */
+
+/* Button Press Feedback: Emil Kowalski rule: scale(0.97) on :active */
+.btn-tactile {
+  transition: transform 140ms var(--ease-out), background-color 140ms ease, box-shadow 140ms ease, border-color 140ms ease, opacity 140ms ease;
+  will-change: transform;
+}
+.btn-tactile:active {
+  transform: scale(0.97);
+}
+
+/* Card Interactive Press */
+.card-tactile {
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms ease;
+  will-change: transform;
+}
+.card-tactile:active {
+  transform: scale(0.985);
+}
+
+/* Filter / Suggestion Chip Press */
+.chip-tactile {
+  transition: transform 120ms var(--ease-out), background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+  will-change: transform;
+}
+.chip-tactile:active {
+  transform: scale(0.95);
+}
+
+/* Hover effects gated behind touch device check to avoid sticky hover states */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+  .card-tactile:hover {
+    transform: translateY(-1.5px);
+  }
+}
+
+/* Accessibility: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom Clean Scrollbar */

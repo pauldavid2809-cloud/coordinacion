@@ -84,7 +84,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
           propuestasFiltradas.map(item => (
             <div
               key={item.id}
-              className="p-5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
+              className="p-5 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-[border-color,background-color] duration-150 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm stagger-item"
             >
               <div className="space-y-2 flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -126,7 +126,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
               <div className="w-full md:w-auto flex justify-end">
                 <button
                   onClick={() => abrirEdicion(item)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm"
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold btn-tactile shadow-sm"
                 >
                   Evaluar Propuesta
                 </button>
@@ -138,8 +138,8 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
 
       {/* Modal para editar */}
       {editandoItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-backdropFade">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden p-6 space-y-4 animate-modalIn">
             <h3 className="font-serif font-bold text-base text-slate-900">
               Evaluar Propuesta Comunitaria
             </h3>
@@ -155,7 +155,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                 <select
                   value={nuevoEstado}
                   onChange={(e) => setNuevoEstado(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm transition-[border-color,box-shadow] duration-150"
                 >
                   <option value="pendiente">Pendiente</option>
                   <option value="en_revision">En Evaluación</option>
@@ -173,7 +173,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                   onChange={(e) => setObservacion(e.target.value)}
                   rows={3}
                   placeholder="Escribe comentarios formativos, indicaciones o aprobación..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm transition-[border-color,box-shadow] duration-150"
                 />
               </div>
 
@@ -181,14 +181,14 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                 <button
                   type="button"
                   onClick={() => setEditandoItem(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 btn-tactile"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md btn-tactile"
                 >
                   {loading ? 'Guardando...' : 'Guardar Evaluación'}
                 </button>
