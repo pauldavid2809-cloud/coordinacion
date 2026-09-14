@@ -131,7 +131,12 @@ export async function triggerPushNotification({ title, body, tag, url = '/' }) {
     badge: origin ? `${origin}/logo.png` : '/logo.png',
     tag: tag || ('seminario-notif-' + Date.now()),
     renotify: true,
-    vibrate: [200, 100, 200],
+    requireInteraction: true, // Prioridad alta: impide que Android/Chrome lo envíe a spam o notificaciones silenciosas
+    silent: false,
+    vibrate: [300, 150, 300],
+    actions: [
+      { action: 'open_app', title: 'Ver en la App' }
+    ],
     data: url
   };
 

@@ -27,7 +27,12 @@ self.addEventListener('push', (event) => {
     vibrate: [200, 100, 200],
     data: data.url || '/',
     tag: data.tag || 'seminario-notif',
-    renotify: true
+    renotify: true,
+    requireInteraction: true,
+    silent: false,
+    actions: [
+      { action: 'open_app', title: 'Ver en la App' }
+    ]
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
@@ -36,7 +41,10 @@ self.addEventListener('push', (event) => {
 // Al hacer clic sobre la notificación, enfocar o abrir la aplicación
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const urlToOpen = event.notification.data || '/';
+  const rawData = event.notification.data;
+  const urlToOpen = (rawData && typeof rawData === 'object' && rawData.url) 
+    ? rawData.url 
+    : (typeof rawData === 'string' ? rawData : '/');
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {

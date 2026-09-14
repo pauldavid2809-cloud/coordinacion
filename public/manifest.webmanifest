@@ -1,0 +1,28 @@
+{
+  "name": "Seminario Mayor Santo Tomás de Aquino",
+  "short_name": "Seminario",
+  "description": "Sistema Oficial de Permisos, Coordinación y Propuestas del Seminario Mayor Santo Tomás de Aquino - Arquidiócesis de Maracaibo",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "education",
+    "productivity"
+  ]
+}
