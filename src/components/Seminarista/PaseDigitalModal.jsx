@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { formatDateTime, formatJurisdiccion } from '../../utils/formatters.js';
 import { generatePermisoWhatsAppText, shareViaWhatsApp } from '../../utils/whatsappShare.js';
+import { FORMADORES_SEMINARIO } from '../../data/formadores.js';
 
 export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista }) {
   if (!isOpen || !permiso) return null;
@@ -24,8 +25,9 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
   const isAprobado = (permiso.estado || '').toLowerCase() === 'aprobado';
   const codigoCert = (permiso.id ? String(permiso.id).slice(-8).toUpperCase() : 'SEMINARIO-AUT');
 
-  // Estado para el envío directo a un Formador
+  // Estado para el envío a otro formador personalizado
   const [showFormadorDrawer, setShowFormadorDrawer] = useState(false);
+  const [showOtroFormador, setShowOtroFormador] = useState(false);
   const [formadorRol, setFormadorRol] = useState(() => localStorage.getItem('seminario_formador_rol') || 'Padre Formador');
   const [formadorTelefono, setFormadorTelefono] = useState(() => localStorage.getItem('seminario_formador_telefono') || '');
 
@@ -48,8 +50,14 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
     shareViaWhatsApp(text);
   };
 
-  // Compartir directo al Padre Formador
-  const handleShareFormador = () => {
+  // Compartir directo a uno de los sacerdotes del equipo formador
+  const handleSendToFormadorDirect = (formador) => {
+    const text = generatePermisoWhatsAppText(permiso, seminarista, formador.nombre);
+    shareViaWhatsApp(text, formador.telefonoRaw);
+  };
+
+  // Compartir a formador personalizado
+  const handleShareFormadorPersonalizado = () => {
     const text = generatePermisoWhatsAppText(permiso, seminarista, formadorRol);
     shareViaWhatsApp(text, formadorTelefono);
   };
@@ -173,23 +181,23 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
             </div>
           )}
 
-          {/* Opción rápida: Enviar directamente a un Formador por WhatsApp */}
+          {/* Directorio de Envío Rápido al Equipo Formador por WhatsApp */}
           <div className="rounded-2xl border border-amber-500/30 bg-slate-900 overflow-hidden shadow-md">
             <button
               type="button"
               onClick={() => setShowFormadorDrawer(!showFormadorDrawer)}
-              className="w-full p-3 flex items-center justify-between text-left hover:bg-slate-800/80 transition-colors btn-tactile"
+              className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-800/80 transition-colors btn-tactile"
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold flex-shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold flex-shrink-0 border border-amber-500/30">
                   <Church className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="text-xs font-bold text-amber-200 block">
-                    ¿Enviar a un Padre Formador?
+                    Enviar a un Padre Formador
                   </span>
                   <span className="text-[10px] text-slate-400 block">
-                    Envío directo con saludo formal a su WhatsApp
+                    P. Jorge • P. José Varela • P. Renzo
                   </span>
                 </div>
               </div>
@@ -199,56 +207,105 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
             </button>
 
             {showFormadorDrawer && (
-              <div className="p-3.5 pt-1 space-y-3 border-t border-slate-800 text-xs animate-fadeIn">
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1.5">
-                    1. Destinatario eclesiástico
-                  </label>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {FORMADOR_PRESETS.map((cargo) => (
+              <div className="p-3.5 pt-1 space-y-2.5 border-t border-slate-800 text-xs animate-fadeIn">
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  Directorio del Equipo Formador
+                </p>
+
+                {/* Lista de Sacerdotes Formadores Oficiales */}
+                <div className="space-y-1.5">
+                  {FORMADORES_SEMINARIO.map((formador) => (
+                    <div
+                      key={formador.id}
+                      className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between hover:border-amber-500/40 transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-300 font-bold flex items-center justify-center text-[11px] flex-shrink-0 border border-amber-500/25">
+                          {formador.iniciales}
+                        </div>
+                        <div className="min-w-0">
+                          <h5 className="font-bold text-xs text-white truncate">
+                            {formador.nombre}
+                          </h5>
+                          <p className="text-[10px] text-slate-400 font-mono">
+                            {formador.telefono}
+                          </p>
+                        </div>
+                      </div>
+
                       <button
-                        key={cargo}
                         type="button"
-                        onClick={() => setFormadorRol(cargo)}
-                        className={`py-1.5 px-2 rounded-lg text-[11px] font-semibold border text-center transition-all ${
-                          formadorRol === cargo
-                            ? 'bg-amber-500/25 text-amber-200 border-amber-400 shadow-sm'
-                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-600'
-                        }`}
+                        onClick={() => handleSendToFormadorDirect(formador)}
+                        className="ml-2 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm btn-tactile flex-shrink-0"
                       >
-                        {cargo}
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span>Enviar</span>
                       </button>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
 
-                <div>
-                  <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
-                    2. Número de WhatsApp del Formador (Opcional)
-                  </label>
-                  <div className="relative">
-                    <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="tel"
-                      value={formadorTelefono}
-                      onChange={(e) => setFormadorTelefono(e.target.value)}
-                      placeholder="Ej. 04141234567 o 0424..."
-                      className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-                    />
-                  </div>
-                  <span className="text-[10px] text-slate-400 block mt-1 leading-snug">
-                    {formadorTelefono ? '✓ Número guardado en este dispositivo.' : '💡 Si lo dejas vacío, podrás elegirlo en tu lista de contactos de WhatsApp.'}
-                  </span>
+                {/* Botón para expandir personalización */}
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowOtroFormador(!showOtroFormador)}
+                    className="text-[11px] text-amber-300/90 hover:text-amber-200 font-semibold flex items-center gap-1 transition-colors"
+                  >
+                    <span>{showOtroFormador ? '▲ Ocultar otro destinatario' : '▼ ¿Enviar a otro sacerdote o número?'}</span>
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleShareFormador}
-                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 btn-tactile"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Enviar a {formadorRol}</span>
-                </button>
+                {showOtroFormador && (
+                  <div className="pt-2 space-y-2.5 border-t border-slate-800/80 animate-fadeIn">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                        Cargo / Título
+                      </label>
+                      <div className="grid grid-cols-2 gap-1.5 mb-2">
+                        {FORMADOR_PRESETS.map((cargo) => (
+                          <button
+                            key={cargo}
+                            type="button"
+                            onClick={() => setFormadorRol(cargo)}
+                            className={`py-1.5 px-2 rounded-lg text-[11px] font-semibold border text-center transition-all ${
+                              formadorRol === cargo
+                                ? 'bg-amber-500/25 text-amber-200 border-amber-400 shadow-sm'
+                                : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-600'
+                            }`}
+                          >
+                            {cargo}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+                        Número de WhatsApp (Opcional)
+                      </label>
+                      <div className="relative">
+                        <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="tel"
+                          value={formadorTelefono}
+                          onChange={(e) => setFormadorTelefono(e.target.value)}
+                          placeholder="Ej. 04141234567 o 0424..."
+                          className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleShareFormadorPersonalizado}
+                      className="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow flex items-center justify-center gap-2 btn-tactile"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Enviar a {formadorRol}</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
