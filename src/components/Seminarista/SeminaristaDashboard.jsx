@@ -23,7 +23,7 @@ import SolicitudPermisoModal from './SolicitudPermisoModal.jsx';
 import SolicitudNecesidadModal from './SolicitudNecesidadModal.jsx';
 import SolicitudPropuestaModal from './SolicitudPropuestaModal.jsx';
 import PaseDigitalModal from './PaseDigitalModal.jsx';
-import { formatDateTime, timeAgo } from '../../utils/formatters.js';
+import { formatDateTime, timeAgo, formatJurisdiccion } from '../../utils/formatters.js';
 import { eliminarSolicitud } from '../../services/supabaseService.js';
 import { 
   isPushSupported, 
@@ -192,7 +192,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                 {seminarista?.curso} • Etapa de {seminarista?.etapa}
               </p>
               <p className="text-xs text-amber-400/90 flex items-center gap-1.5 mt-0.5">
-                <span>Diócesis de {seminarista?.diocesis}</span>
+                <span>{formatJurisdiccion(seminarista?.diocesis)}</span>
                 {seminarista?.telefono && <span>• Tel: {seminarista.telefono}</span>}
               </p>
             </div>

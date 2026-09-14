@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Users, Search, UserPlus, Edit2, Phone, GraduationCap, Church, X, Check, Save } from 'lucide-react';
 import { guardarSeminarista } from '../../services/supabaseService.js';
-import { formatCedulaVenezolana } from '../../utils/formatters';
+import { formatCedulaVenezolana, formatJurisdiccion } from '../../utils/formatters.js';
 
 const CURSOS_DISPONIBLES = [
   '1° de Filosofía',
@@ -15,11 +15,11 @@ const CURSOS_DISPONIBLES = [
 
 const DIOCESIS_DISPONIBLES = [
   'Maracaibo',
-  'Cabimas',
   'Coro',
+  'Cabimas',
   'Machiques',
   'El Vigía - San Carlos',
-  'Otra Diócesis'
+  'Otra Jurisdicción'
 ];
 
 export default function PadronSeminaristas({ seminaristas = [], solicitudes = [], onNotify }) {
@@ -200,7 +200,7 @@ export default function PadronSeminaristas({ seminaristas = [], solicitudes = []
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Church className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
-                    <span>Diócesis de {sem.diocesis}</span>
+                    <span>{formatJurisdiccion(sem.diocesis)}</span>
                   </div>
                   {sem.telefono && (
                     <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
@@ -291,7 +291,7 @@ export default function PadronSeminaristas({ seminaristas = [], solicitudes = []
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    Diócesis
+                    Arquidiócesis / Diócesis
                   </label>
                   <select
                     value={formData.diocesis}
@@ -299,7 +299,7 @@ export default function PadronSeminaristas({ seminaristas = [], solicitudes = []
                     className="w-full px-2.5 py-2 rounded-xl border border-slate-300 text-xs"
                   >
                     {DIOCESIS_DISPONIBLES.map(d => (
-                      <option key={d} value={d}>{d}</option>
+                      <option key={d} value={d}>{formatJurisdiccion(d)}</option>
                     ))}
                   </select>
                 </div>

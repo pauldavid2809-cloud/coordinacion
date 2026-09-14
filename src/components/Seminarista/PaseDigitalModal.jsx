@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, Share2, X, Clock, MapPin, Calendar, CheckCircle2, User, Church } from 'lucide-react';
-import { formatDateTime } from '../../utils/formatters';
-import { generatePermisoWhatsAppText, shareViaWhatsApp } from '../../utils/whatsappShare';
+import { formatDateTime, formatJurisdiccion } from '../../utils/formatters.js';
+import { generatePermisoWhatsAppText, shareViaWhatsApp } from '../../utils/whatsappShare.js';
 
 export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista }) {
   if (!isOpen || !permiso) return null;
@@ -69,7 +69,7 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
                 Cédula: <span className="font-mono text-slate-900 font-bold">{seminarista?.cedula}</span>
               </p>
               <p className="text-[11px] text-amber-800 font-semibold">
-                {seminarista?.curso} • Diócesis de {seminarista?.diocesis}
+                {seminarista?.curso} • {formatJurisdiccion(seminarista?.diocesis)}
               </p>
             </div>
           </div>

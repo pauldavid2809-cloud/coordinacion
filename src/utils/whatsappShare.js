@@ -1,4 +1,4 @@
-import { formatDateTime } from './formatters.js';
+import { formatDateTime, formatJurisdiccion } from './formatters.js';
 
 /**
  * Genera el texto formal para compartir el comprobante por WhatsApp.
@@ -11,7 +11,7 @@ export function generatePermisoWhatsAppText(permiso, seminarista) {
     `👤 *Seminarista:* ${seminarista?.nombreCompleto || seminarista?.nombre || 'No especificado'}`,
     `🪪 *Cédula:* ${seminarista?.cedula || 'N/A'}`,
     `🎓 *Curso:* ${seminarista?.curso || 'N/A'} (${seminarista?.etapa || ''})`,
-    `⛪ *Diócesis:* ${seminarista?.diocesis || 'N/A'}`,
+    `⛪ *Jurisdicción:* ${formatJurisdiccion(seminarista?.diocesis)}`,
     '----------------------------------------',
     `📍 *Destino:* ${permiso.destino || 'No especificado'}`,
     `📝 *Motivo:* ${permiso.motivo || 'No especificado'}`,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldCheck, User, LogOut, Church, ChevronDown, Bell, CheckCircle2, X } from 'lucide-react';
+import { formatJurisdiccion } from '../../utils/formatters.js';
 
 export default function Navbar({ session, onLogout, onOpenLogin }) {
   const isRector = session?.role === 'rector';
@@ -142,13 +143,13 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
             <div className="p-5 space-y-3 text-xs text-slate-700">
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                  Etapa y Diócesis
+                  Etapa y Jurisdicción Eclesiástica
                 </span>
                 <p className="font-bold text-slate-900 text-sm">
                   {session.user?.curso}
                 </p>
-                <p className="text-slate-600">
-                  Diócesis de {session.user?.diocesis}
+                <p className="text-slate-600 font-medium">
+                  {formatJurisdiccion(session.user?.diocesis)}
                 </p>
               </div>
 

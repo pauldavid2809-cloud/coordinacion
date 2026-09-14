@@ -80,3 +80,39 @@ export function timeAgo(dateInput) {
     return '';
   }
 }
+
+/**
+ * Formatea la jurisdicción eclesiástica reconociendo canónicamente Arquidiócesis y Diócesis.
+ * Maracaibo y Coro son Arquidiócesis Metropolitanas en Venezuela.
+ */
+export function formatJurisdiccion(diocesis) {
+  if (!diocesis) return 'Jurisdicción no especificada';
+  const clean = String(diocesis).trim();
+  const lower = clean.toLowerCase();
+
+  // Si ya contiene la palabra canónica completa
+  if (lower.startsWith('arquidiócesis') || lower.startsWith('arquidiocesis') ||
+      lower.startsWith('diócesis') || lower.startsWith('diocesis')) {
+    return clean;
+  }
+
+  // Maracaibo y Coro son Arquidiócesis
+  if (lower.includes('maracaibo') || lower.includes('coro')) {
+    return `Arquidiócesis de ${clean}`;
+  }
+
+  // Diócesis sufragáneas
+  return `Diócesis de ${clean}`;
+}
+
+/**
+ * Retorna el tipo de jurisdicción eclesiástica: 'Arquidiócesis' o 'Diócesis'
+ */
+export function getTipoJurisdiccion(diocesis) {
+  if (!diocesis) return 'Jurisdicción';
+  const lower = String(diocesis).toLowerCase().trim();
+  if (lower.includes('maracaibo') || lower.includes('coro') || lower.includes('arquidiócesis') || lower.includes('arquidiocesis')) {
+    return 'Arquidiócesis';
+  }
+  return 'Diócesis';
+}
