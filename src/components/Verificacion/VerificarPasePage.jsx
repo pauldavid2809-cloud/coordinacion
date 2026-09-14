@@ -114,11 +114,11 @@ export default function VerificarPasePage({ permiso, seminarista, onVolver, isLo
     badgeVigencia = {
       tipo: 'cumplido',
       titulo: 'HORARIO DE RETORNO CUMPLIDO',
-      subtitulo: `La hora prevista de regreso finalizó el ${formatDateTime(permiso.fechaRetorno)}.`,
-      bgColor: 'bg-amber-500/20',
-      textColor: 'text-amber-300',
-      borderColor: 'border-amber-400/50',
-      icono: Clock
+      subtitulo: `La hora límite autorizada de regreso finalizó el ${formatDateTime(permiso.fechaRetorno)}.`,
+      bgColor: 'bg-red-500/20',
+      textColor: 'text-red-300',
+      borderColor: 'border-red-500/60',
+      icono: AlertTriangle
     };
   } else if (salidaDate && now < salidaDate) {
     badgeVigencia = {
