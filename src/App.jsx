@@ -89,12 +89,11 @@ export default function App() {
             {/* Hero Principal */}
             <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-3xl p-8 sm:p-12 text-white border border-amber-500/30 shadow-2xl text-center relative overflow-hidden">
               <div className="relative z-10 space-y-4">
-                <div className="w-20 h-20 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-slate-950/80 p-2 border-2 border-amber-400/50 shadow-2xl flex items-center justify-center">
+                <div className="h-28 sm:h-36 w-auto mx-auto flex items-center justify-center my-2">
                   <img 
-                    src="/logo.svg" 
-                    alt="Escudo Seminario Santo Tomás de Aquino" 
-                    className="w-full h-full object-contain filter drop-shadow"
-                    onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+                    src="/logo.png" 
+                    alt="Escudo Seminario Santo Tomás de Aquino - Sacerdos Lux" 
+                    className="h-full w-auto object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 

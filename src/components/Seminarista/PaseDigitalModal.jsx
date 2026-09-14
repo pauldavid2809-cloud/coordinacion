@@ -32,12 +32,11 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
             <X className="w-5 h-5" />
           </button>
 
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-950 p-1 border border-amber-400/50 flex items-center justify-center mb-2 shadow-lg">
+          <div className="h-20 w-auto mx-auto flex items-center justify-center mb-2">
             <img 
-              src="/logo.svg" 
-              alt="Escudo Oficial Seminario Santo Tomás de Aquino" 
-              className="w-full h-full object-contain"
-              onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+              src="/logo.png" 
+              alt="Escudo Oficial Seminario Santo Tomás de Aquino - Sacerdos Lux" 
+              className="h-full w-auto object-contain filter drop-shadow-md"
             />
           </div>
           <h3 className="font-serif font-bold text-sm tracking-wider uppercase text-amber-200">

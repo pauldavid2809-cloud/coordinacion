@@ -58,12 +58,11 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
         
         {/* Cabecera del modal */}
         <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 p-6 text-white text-center relative border-b border-amber-500/20">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-slate-950 p-1.5 border border-amber-400/40 flex items-center justify-center mb-3 shadow-md">
+          <div className="h-20 w-auto mx-auto flex items-center justify-center mb-3">
             <img 
-              src="/logo.svg" 
-              alt="Logo Seminario" 
-              className="w-full h-full object-contain"
-              onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+              src="/logo.png" 
+              alt="Escudo Seminario Santo Tomás de Aquino - Sacerdos Lux" 
+              className="h-full w-auto object-contain filter drop-shadow-md"
             />
           </div>
           <h2 className="text-xl font-serif font-bold text-amber-100">

@@ -12,12 +12,11 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
           
           {/* Logo & Institución */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-950 p-1 flex items-center justify-center shadow-md border border-amber-400/40">
+            <div className="h-11 sm:h-14 w-auto flex items-center justify-center flex-shrink-0 py-0.5">
               <img 
-                src="/logo.svg" 
-                alt="Escudo Seminario Santo Tomás de Aquino" 
-                className="w-full h-full object-contain"
-                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+                src="/logo.png" 
+                alt="Escudo Seminario Santo Tomás de Aquino - Sacerdos Lux" 
+                className="h-full w-auto object-contain filter drop-shadow-md"
               />
             </div>
             <div>
