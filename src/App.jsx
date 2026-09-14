@@ -4,8 +4,9 @@ import LoginModal from './components/Auth/LoginModal';
 import SeminaristaDashboard from './components/Seminarista/SeminaristaDashboard';
 import RectorDashboard from './components/Rector/RectorDashboard';
 import ToastNotification from './components/Common/ToastNotification';
+import VerificarPasePage from './components/Verificacion/VerificarPasePage';
 import { getCurrentSession, logout } from './services/authService';
-import { subscribeToSeminaristas, subscribeToSolicitudes } from './services/supabaseService.js';
+import { subscribeToSeminaristas, subscribeToSolicitudes, getSolicitudByIdOrCode } from './services/supabaseService.js';
 import { registerServiceWorker } from './utils/pushNotifications.js';
 import { 
   Church, 
@@ -19,6 +20,24 @@ import {
   Share2
 } from 'lucide-react';
 
+/**
+ * Extrae el identificador o código de pase desde la URL (?pase=... o /pase/...)
+ */
+function getPaseIdFromUrl() {
+  if (typeof window === 'undefined') return null;
+  
+  // 1. Revisar parámetro de búsqueda: ?pase=... o ?id=...
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get('pase') || params.get('id');
+  if (fromQuery) return fromQuery.trim();
+
+  // 2. Revisar ruta limpia: /pase/:id o /verificar/:id
+  const match = window.location.pathname.match(/\/(?:pase|verificar)\/([^/?#]+)/i);
+  if (match && match[1]) return decodeURIComponent(match[1]).trim();
+
+  return null;
+}
+
 export default function App() {
   const [session, setSession] = useState(() => getCurrentSession());
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -26,6 +45,83 @@ export default function App() {
   const [seminaristas, setSeminaristas] = useState([]);
   const [solicitudes, setSolicitudes] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
+
+  // Estado para verificación pública de pase desde link
+  const [paseUrlId, setPaseUrlId] = useState(() => getPaseIdFromUrl());
+  const [directPase, setDirectPase] = useState(null);
+  const [isVerifyingLoading, setIsVerifyingLoading] = useState(false);
+  const [verifyError, setVerifyError] = useState(null);
+
+  // Escuchar cambios de URL en el navegador (Back/Forward y popstate)
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setPaseUrlId(getPaseIdFromUrl());
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
+
+  // Carga reactiva del pase de verificación si hay un ID en la URL
+  useEffect(() => {
+    if (!paseUrlId) {
+      setDirectPase(null);
+      setVerifyError(null);
+      return;
+    }
+
+    const target = String(paseUrlId).trim().toUpperCase();
+
+    // 1. Intentar localizar en las solicitudes ya cargadas en memoria
+    const existing = solicitudes.find((s) => {
+      if (!s) return false;
+      const sId = String(s.id).trim().toUpperCase();
+      return sId === target || sId.slice(-8) === target;
+    });
+
+    if (existing) {
+      setDirectPase(existing);
+      setIsVerifyingLoading(false);
+      setVerifyError(null);
+      return;
+    }
+
+    // 2. Si no está en memoria, consultar directamente a Supabase
+    let isCancelled = false;
+    setIsVerifyingLoading(true);
+    setVerifyError(null);
+
+    getSolicitudByIdOrCode(paseUrlId)
+      .then((result) => {
+        if (isCancelled) return;
+        setIsVerifyingLoading(false);
+        if (result) {
+          setDirectPase(result);
+        } else {
+          setVerifyError('No se encontró ningún pase de salida con el código o identificador proporcionado.');
+        }
+      })
+      .catch((err) => {
+        if (isCancelled) return;
+        setIsVerifyingLoading(false);
+        setVerifyError('Ocurrió un error al verificar el pase institucional.');
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [paseUrlId, solicitudes]);
+
+  // Limpiar URL y volver al inicio
+  const handleVolverHome = () => {
+    if (typeof window !== 'undefined') {
+      const cleanUrl = window.location.origin + window.location.pathname.replace(/\/(?:pase|verificar)\/[^/?#]+/i, '');
+      window.history.replaceState({}, '', cleanUrl || '/');
+    }
+    setPaseUrlId(null);
+    setDirectPase(null);
+    setVerifyError(null);
+  };
 
   // Suscripción a Supabase en tiempo real y registro del Service Worker
   useEffect(() => {
@@ -60,6 +156,35 @@ export default function App() {
     setLoginInitialTab(tab);
     setIsLoginOpen(true);
   };
+
+  // Si hay un enlace de verificación de pase activo en la URL, mostrar la vista dedicada
+  if (paseUrlId) {
+    const target = String(paseUrlId).trim().toUpperCase();
+    const resolvedPermiso = directPase || solicitudes.find((s) => {
+      if (!s) return false;
+      const sId = String(s.id).trim().toUpperCase();
+      return sId === target || sId.slice(-8) === target;
+    });
+
+    const resolvedSeminarista = resolvedPermiso
+      ? seminaristas.find((sem) => sem.cedula === resolvedPermiso.seminaristaCedula) || {
+          nombreCompleto: resolvedPermiso.seminaristaNombre,
+          cedula: resolvedPermiso.seminaristaCedula,
+          curso: resolvedPermiso.seminaristaCurso,
+          diocesis: resolvedPermiso.seminaristaDiocesis
+        }
+      : null;
+
+    return (
+      <VerificarPasePage
+        permiso={resolvedPermiso}
+        seminarista={resolvedSeminarista}
+        onVolver={handleVolverHome}
+        isLoading={isVerifyingLoading && !resolvedPermiso}
+        error={verifyError}
+      />
+    );
+  }
 
   return (
     <div className="min-h-[100dvh] bg-slate-100 flex flex-col font-sans text-slate-800 antialiased">

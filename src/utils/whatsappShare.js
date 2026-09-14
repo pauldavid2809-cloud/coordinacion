@@ -1,13 +1,27 @@
 import { formatDateTime, formatJurisdiccion } from './formatters.js';
 
 /**
+ * Obtiene el enlace web oficial para verificar un pase digital.
+ */
+export function getPermisoVerificationUrl(permisoId) {
+  if (!permisoId) return '';
+  const baseUrl = typeof window !== 'undefined' && window.location.origin
+    ? window.location.origin
+    : 'https://coordinacion-nine.vercel.app';
+  return `${baseUrl}/?pase=${permisoId}`;
+}
+
+/**
  * Genera el texto formal para compartir el comprobante por WhatsApp.
  * Soporta un saludo específico si se envía directamente a un Formador.
+ * Incluye el enlace web único para verificación oficial en línea.
  */
 export function generatePermisoWhatsAppText(permiso, seminarista, destinatario = null) {
   const encabezado = destinatario
     ? `Estimado ${destinatario}, le comparto mi Pase Digital de Salida autorizado por Rectoría:\n\n`
     : '';
+
+  const verificationUrl = permiso?.id ? getPermisoVerificationUrl(permiso.id) : '';
 
   const lineas = [
     encabezado + '🏛️ *SEMINARIO MAYOR SANTO TOMÁS DE AQUINO*',
@@ -28,6 +42,9 @@ export function generatePermisoWhatsAppText(permiso, seminarista, destinatario =
     permiso.observacionRector ? `💬 *Observación / Condición:* ${permiso.observacionRector}` : null,
     `📅 *Fecha de Resolución:* ${formatDateTime(permiso.fechaResolucion || new Date())}`,
     `🔑 *Código:* #${permiso.id ? String(permiso.id).slice(-8).toUpperCase() : 'VALIDO'}`,
+    verificationUrl ? '----------------------------------------' : null,
+    verificationUrl ? '🔗 *Verificación Oficial en Línea:*' : null,
+    verificationUrl ? verificationUrl : null,
     '----------------------------------------',
     '_Documento digital institucional verificado por el Sistema de Rectoría 2026-2027._'
   ].filter(Boolean);

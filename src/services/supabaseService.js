@@ -254,6 +254,51 @@ export function subscribeToSolicitudes(callback) {
 }
 
 /**
+ * Obtener una solicitud específica por su ID o código de certificación.
+ * Primero busca en memoria / caché local; si no existe, consulta directamente a Supabase.
+ */
+export async function getSolicitudByIdOrCode(idOrCode) {
+  if (!idOrCode) return null;
+  const target = String(idOrCode).trim();
+  const targetUpper = target.toUpperCase();
+
+  // 1. Buscar en caché local
+  const cached = getLocalCache(LOCAL_SOLICITUDES_KEY, []);
+  const foundInCache = cached.find((s) => {
+    if (!s) return false;
+    if (String(s.id) === target) return true;
+    if (String(s.id).toUpperCase() === targetUpper) return true;
+    if (String(s.id).slice(-8).toUpperCase() === targetUpper) return true;
+    return false;
+  });
+
+  if (foundInCache) return foundInCache;
+
+  // 2. Consulta directa a Supabase
+  try {
+    const { data, error } = await supabase
+      .from('solicitudes')
+      .select('*');
+
+    if (!error && data) {
+      const mapped = data.map(mapSolicitudFromDb);
+      setLocalCache(LOCAL_SOLICITUDES_KEY, mapped);
+      const foundInDb = mapped.find((s) => {
+        if (String(s.id) === target) return true;
+        if (String(s.id).toUpperCase() === targetUpper) return true;
+        if (String(s.id).slice(-8).toUpperCase() === targetUpper) return true;
+        return false;
+      });
+      if (foundInDb) return foundInDb;
+    }
+  } catch (err) {
+    console.warn('Error al consultar solicitud por ID en Supabase:', err.message);
+  }
+
+  return null;
+}
+
+/**
  * Crear una nueva solicitud en Supabase.
  */
 export async function crearSolicitud(solicitudData) {

@@ -13,10 +13,12 @@ import {
   Phone, 
   ChevronDown, 
   ChevronUp,
-  MessageCircle
+  MessageCircle,
+  Copy,
+  Check
 } from 'lucide-react';
 import { formatDateTime, formatJurisdiccion } from '../../utils/formatters.js';
-import { generatePermisoWhatsAppText, shareViaWhatsApp } from '../../utils/whatsappShare.js';
+import { generatePermisoWhatsAppText, shareViaWhatsApp, getPermisoVerificationUrl } from '../../utils/whatsappShare.js';
 import { FORMADORES_SEMINARIO } from '../../data/formadores.js';
 
 export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista }) {
@@ -28,6 +30,7 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
   // Estado para el envío a otro formador personalizado
   const [showFormadorDrawer, setShowFormadorDrawer] = useState(false);
   const [showOtroFormador, setShowOtroFormador] = useState(false);
+  const [copiado, setCopiado] = useState(false);
   const [formadorRol, setFormadorRol] = useState(() => localStorage.getItem('seminario_formador_rol') || 'Padre Formador');
   const [formadorTelefono, setFormadorTelefono] = useState(() => localStorage.getItem('seminario_formador_telefono') || '');
 
@@ -48,6 +51,16 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
   const handleShareGeneral = () => {
     const text = generatePermisoWhatsAppText(permiso, seminarista);
     shareViaWhatsApp(text);
+  };
+
+  // Copiar link oficial de verificación
+  const handleCopiarEnlace = () => {
+    if (!permiso?.id) return;
+    const url = getPermisoVerificationUrl(permiso.id);
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    });
   };
 
   // Compartir directo a uno de los sacerdotes del equipo formador
@@ -324,20 +337,31 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
         </div>
 
         {/* Botones de Pie Fijos (Siempre visibles sin importar el tamaño de la pantalla) */}
-        <div className="flex-shrink-0 p-3.5 sm:p-4 bg-slate-900 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-2">
-          <button
-            onClick={handleShareGeneral}
-            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>Compartir por WhatsApp</span>
-          </button>
-          <button
-            onClick={onClose}
-            className="w-full sm:w-auto py-3 px-5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs btn-tactile"
-          >
-            Cerrar
-          </button>
+        <div className="flex-shrink-0 p-3 sm:p-4 bg-slate-900 border-t border-slate-800 space-y-2">
+          <div className="flex flex-col sm:flex-row items-center gap-2">
+            <button
+              onClick={handleShareGeneral}
+              className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Compartir por WhatsApp</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleCopiarEnlace}
+              className="w-full sm:w-auto py-3 px-3.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-750 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 btn-tactile"
+              title="Copiar enlace web de verificación"
+            >
+              {copiado ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-amber-400" />}
+              <span>{copiado ? '¡Link Copiado!' : 'Copiar Link'}</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="w-full sm:w-auto py-3 px-4 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs btn-tactile"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
 
       </div>
