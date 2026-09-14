@@ -22,17 +22,10 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Seminario Santo Tomás de Aquino';
   const options = {
     body: data.body || 'Tienes una nueva actualización sobre tu solicitud.',
-    icon: data.icon || '/logo.png',
-    badge: data.badge || '/logo.png',
-    vibrate: [200, 100, 200],
+    icon: '/logo.png',
+    badge: '/logo.png',
     data: data.url || '/',
-    tag: data.tag || 'seminario-notif',
-    renotify: true,
-    requireInteraction: true,
-    silent: false,
-    actions: [
-      { action: 'open_app', title: 'Ver en la App' }
-    ]
+    tag: data.tag || 'seminario-solicitud'
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
