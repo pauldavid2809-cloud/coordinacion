@@ -85,10 +85,12 @@ export async function requestPushPermission() {
         await registerServiceWorker();
         playNotificationChime('success');
         // Notificación de confirmación inicial
-        triggerPushNotification({
-          title: 'Seminario Santo Tomás de Aquino',
-          body: 'Notificaciones activadas. Te avisaremos cuando los formadores respondan tus solicitudes.'
-        });
+        setTimeout(() => {
+          triggerPushNotification({
+            title: 'Seminario Santo Tomás de Aquino',
+            body: '¡Notificaciones activadas! Te avisaremos cuando los formadores respondan tus solicitudes.'
+          });
+        }, 300);
         return true;
       }
     }
@@ -100,51 +102,85 @@ export async function requestPushPermission() {
 }
 
 /**
- * Dispara una notificación Push nativa en el dispositivo del usuario y reproduce sonido.
+ * Dispara una notificación Push nativa en el dispositivo del usuario y reproduce sonido armónico.
+ * Compatible al 100% con Chrome para Android (donde new Notification() está deshabilitado).
  */
 export async function triggerPushNotification({ title, body, tag, url = '/' }) {
   playNotificationChime(title && title.toLowerCase().includes('aprobado') ? 'success' : 'alert');
 
-  if (!isPushSupported() || Notification.permission !== 'granted') {
-    return false;
+  if (!isPushSupported()) return false;
+
+  // Si el permiso no está otorgado, intentar solicitarlo
+  if (Notification.permission !== 'granted') {
+    if (Notification.permission === 'default') {
+      try {
+        const p = await Notification.requestPermission();
+        if (p !== 'granted') return false;
+      } catch (e) {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const options = {
-    body,
-    icon: '/logo.png',
-    badge: '/logo.png',
-    tag: tag || 'seminario-solicitud',
+    body: body || 'Actualización sobre tu solicitud',
+    icon: origin ? `${origin}/logo.png` : '/logo.png',
+    badge: origin ? `${origin}/logo.png` : '/logo.png',
+    tag: tag || ('seminario-notif-' + Date.now()),
     renotify: true,
     vibrate: [200, 100, 200],
     data: url
   };
 
-  // Método 1: A través del Service Worker con límite de espera de 1.5s
+  // Método 1: Service Worker (Requerido en Android Chrome)
   if ('serviceWorker' in navigator) {
     try {
-      const reg = await Promise.race([
-        navigator.serviceWorker.ready,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500))
-      ]);
-      if (reg && reg.showNotification) {
-        await reg.showNotification(title, options);
-        return true;
+      let reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) {
+        reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
       }
-    } catch (e) {
-      // Continuar al método directo
+
+      if (reg) {
+        // Si el worker está instalándose o esperando, aguardar brevemente a que active
+        if (reg.installing || reg.waiting) {
+          await new Promise((resolve) => {
+            const worker = reg.installing || reg.waiting;
+            if (worker) {
+              worker.addEventListener('statechange', () => {
+                if (worker.state === 'activated') resolve();
+              });
+            }
+            setTimeout(resolve, 1500);
+          });
+        }
+
+        if (reg.showNotification) {
+          await reg.showNotification(title, options);
+          return true;
+        }
+      }
+    } catch (swErr) {
+      console.warn('Fallo en Service Worker showNotification:', swErr);
     }
   }
 
-  // Método 2: Fallback directo con la API de Notificaciones
+  // Método 2: Fallback directo en Desktop (Safari / Firefox Desktop)
   try {
-    const notif = new Notification(title, options);
-    notif.onclick = () => {
-      window.focus();
-      notif.close();
-    };
-    return true;
-  } catch (err) {
-    console.warn('Fallo al disparar notificación push nativa:', err);
-    return false;
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      const notif = new Notification(title, options);
+      notif.onclick = () => {
+        window.focus();
+        notif.close();
+      };
+      return true;
+    }
+  } catch (notifErr) {
+    // En Android este constructor es ilegal por especificación del navegador
   }
+
+  return false;
 }
+

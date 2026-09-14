@@ -6,6 +6,7 @@ import RectorDashboard from './components/Rector/RectorDashboard';
 import ToastNotification from './components/Common/ToastNotification';
 import { getCurrentSession, logout } from './services/authService';
 import { subscribeToSeminaristas, subscribeToSolicitudes } from './services/supabaseService.js';
+import { registerServiceWorker } from './utils/pushNotifications.js';
 import { 
   Church, 
   ShieldCheck, 
@@ -26,8 +27,10 @@ export default function App() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
 
-  // Suscripción a Firestore en tiempo real
+  // Suscripción a Supabase en tiempo real y registro del Service Worker
   useEffect(() => {
+    registerServiceWorker();
+
     const unsubSem = subscribeToSeminaristas((list) => {
       setSeminaristas(list);
     });
@@ -198,6 +201,7 @@ export default function App() {
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         seminaristas={seminaristas}
+        initialTab={loginInitialTab}
       />
 
       {/* Notificaciones Flotantes */}

@@ -19,6 +19,7 @@ import {
 import BadgeEstado from '../Common/BadgeEstado.jsx';
 import { formatDateTime, timeAgo } from '../../utils/formatters.js';
 import { actualizarEstadoSolicitud } from '../../services/supabaseService.js';
+import { triggerPushNotification } from '../../utils/pushNotifications.js';
 import PaseDigitalModal from '../Seminarista/PaseDigitalModal.jsx';
 
 // Plantillas de aprobación acordadas con los formadores
@@ -81,6 +82,14 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
 
     setUltimoResuelto({ id: item.id, estadoAnterior: item.estado, nombre: item.seminaristaNombre });
 
+    // Disparar Notificación Push nativa inmediata al dispositivo
+    triggerPushNotification({
+      title: 'Permiso APROBADO por Rectoría',
+      body: `El permiso de ${item.seminaristaNombre} hacia "${item.destino || 'destino solicitado'}" ha sido APROBADO.${observacion ? ` Observación: "${observacion}"` : ''}`,
+      tag: `sol-${item.id}-aprobado`,
+      url: '/'
+    });
+
     if (onNotify) {
       onNotify(`Permiso de ${item.seminaristaNombre} aprobado.`);
     }
@@ -92,13 +101,22 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
       alert('Por favor indica el motivo del rechazo.');
       return;
     }
+    const motivoTexto = motivoRechazo.trim();
     setLoadingId(item.id);
-    await actualizarEstadoSolicitud(item.id, 'rechazado', motivoRechazo.trim());
+    await actualizarEstadoSolicitud(item.id, 'rechazado', motivoTexto);
     setLoadingId(null);
     setRechazandoId(null);
     setMotivoRechazo('');
 
     setUltimoResuelto({ id: item.id, estadoAnterior: item.estado, nombre: item.seminaristaNombre });
+
+    // Disparar Notificación Push nativa inmediata al dispositivo
+    triggerPushNotification({
+      title: 'Solicitud NO Aprobada',
+      body: `El permiso de ${item.seminaristaNombre} hacia "${item.destino || 'destino solicitado'}" ha sido RECHAZADO.${motivoTexto ? ` Motivo: "${motivoTexto}"` : ''}`,
+      tag: `sol-${item.id}-rechazado`,
+      url: '/'
+    });
 
     if (onNotify) {
       onNotify(`Permiso de ${item.seminaristaNombre} rechazado.`);

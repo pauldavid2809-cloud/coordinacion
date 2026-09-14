@@ -64,25 +64,38 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
   const handleProbarNotificacion = async () => {
     playNotificationChime('success');
     
-    if (pushPermission !== 'granted') {
+    let currentPerm = getNotificationPermission();
+    if (currentPerm === 'denied') {
+      alert('Las notificaciones están bloqueadas en este navegador o dispositivo.\n\nPara activarlas: Toca el icono de candado o configuración junto a la URL arriba en Chrome > Permisos > Permitir Notificaciones.');
+      return;
+    }
+
+    if (currentPerm !== 'granted') {
       const granted = await requestPushPermission();
-      setPushPermission(getNotificationPermission());
+      currentPerm = getNotificationPermission();
+      setPushPermission(currentPerm);
       if (!granted) {
         if (onNotify) {
-          onNotify('Tono reproducido. Para recibir avisos en pantalla, concede el permiso en tu navegador.');
+          onNotify('Tono reproducido. Para recibir la notificación en pantalla, pulsa "Permitir" en el aviso de Chrome.');
         }
         return;
       }
     }
 
-    await triggerPushNotification({
+    const sent = await triggerPushNotification({
       title: 'Seminario Santo Tomás de Aquino',
       body: '¡Sistema de Notificaciones Activo! Recibirás alertas inmediatas cuando respondan tus solicitudes.',
       tag: 'test-push-' + Date.now()
     });
 
-    if (onNotify) {
-      onNotify('Notificación y sonido de prueba emitidos correctamente.');
+    if (sent) {
+      if (onNotify) {
+        onNotify('Notificación emergente emitida a tu dispositivo y sonido reproducido.');
+      }
+    } else {
+      if (onNotify) {
+        onNotify('Tono reproducido. Si no apareció en tu barra superior, revisa los permisos de Chrome en Ajustes de Android.');
+      }
     }
   };
 
@@ -208,7 +221,30 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
       </div>
 
       {/* Banner / Estado de Notificaciones Push Nativas */}
-      {isPushSupported() && pushPermission !== 'granted' ? (
+      {isPushSupported() && pushPermission === 'denied' ? (
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-5 h-5 text-rose-600" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-rose-950 uppercase tracking-wider">
+                Notificaciones bloqueadas en este navegador
+              </h4>
+              <p className="text-xs text-rose-800 mt-0.5">
+                Para recibir avisos al aprobar tus permisos: Toca el icono de candado o ajustes junto a la URL arriba en Chrome &gt; Permisos &gt; Activar Notificaciones.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleProbarNotificacion}
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md btn-tactile flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            <Volume2 className="w-4 h-4" />
+            <span>Probar Sonido</span>
+          </button>
+        </div>
+      ) : isPushSupported() && pushPermission !== 'granted' ? (
         <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/15 to-amber-500/10 border border-amber-400/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-fadeIn">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center flex-shrink-0">
@@ -219,7 +255,7 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                 Activar Notificaciones Push en este dispositivo
               </h4>
               <p className="text-xs text-slate-600 mt-0.5">
-                Recibe avisos inmediatos con sonido en tu móvil o navegador al momento que Rectoría apruebe o rechace tus permisos.
+                Recibe avisos inmediatos en tu móvil o computador al momento que Rectoría apruebe o rechace tus permisos.
               </p>
             </div>
           </div>
@@ -227,10 +263,10 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
             <button
               onClick={handleProbarNotificacion}
               className="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs shadow-sm btn-tactile flex items-center justify-center gap-1.5"
-              title="Probar sonido y notificación"
+              title="Probar sonido y aviso"
             >
-              <Volume2 className="w-4 h-4 text-amber-600" />
-              <span>Probar Sonido</span>
+              <Bell className="w-4 h-4 text-amber-600" />
+              <span>Probar Notificación</span>
             </button>
             <button
               onClick={handleActivarPush}
@@ -245,14 +281,14 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
         <div className="flex items-center justify-between px-4 py-2.5 bg-emerald-50 border border-emerald-200/80 rounded-2xl text-xs text-emerald-900 animate-fadeIn">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-medium">Notificaciones activadas en este dispositivo</span>
+            <span className="font-medium">Notificaciones push activadas en este dispositivo</span>
           </div>
           <button
             onClick={handleProbarNotificacion}
             className="text-emerald-700 hover:text-emerald-800 font-bold underline flex items-center gap-1 cursor-pointer"
           >
-            <Volume2 className="w-3.5 h-3.5" />
-            <span>Probar sonido</span>
+            <Bell className="w-3.5 h-3.5" />
+            <span>Probar aviso en pantalla</span>
           </button>
         </div>
       ) : null}

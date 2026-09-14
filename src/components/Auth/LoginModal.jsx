@@ -1,15 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { User, ShieldCheck, KeyRound, AlertCircle, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { authenticateSeminarista, authenticateRector } from '../../services/authService';
 import { extractCedulaDigits, matchCedula } from '../../utils/formatters';
 
-export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminaristas = [] }) {
-  const [activeTab, setActiveTab] = useState('seminarista'); // 'seminarista' | 'rector'
+export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminaristas = [], initialTab = 'seminarista' }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'seminarista' | 'rector'
   const [cedulaInput, setCedulaInput] = useState('');
   const [claveInput, setClaveInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab || 'seminarista');
+      setError('');
+    }
+  }, [isOpen, initialTab]);
 
   // Detección previa del seminarista conforme escribe
   const matchedSeminarista = useMemo(() => {
