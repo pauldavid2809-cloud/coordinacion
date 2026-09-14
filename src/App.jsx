@@ -5,7 +5,7 @@ import SeminaristaDashboard from './components/Seminarista/SeminaristaDashboard'
 import RectorDashboard from './components/Rector/RectorDashboard';
 import ToastNotification from './components/Common/ToastNotification';
 import { getCurrentSession, logout } from './services/authService';
-import { subscribeToSeminaristas, subscribeToSolicitudes } from './services/firestoreService';
+import { subscribeToSeminaristas, subscribeToSolicitudes } from './services/supabaseService.js';
 import { 
   Church, 
   ShieldCheck, 
