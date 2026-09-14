@@ -68,7 +68,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
           <h2 className="text-xl font-serif font-bold text-amber-100">
             {activeTab === 'seminarista' ? 'Portal del Seminarista' : 'Acceso de Rectoría'}
           </h2>
-          <p className="text-xs text-slate-300 mt-1">
+          <p className="text-[11px] font-display font-semibold tracking-wider text-amber-300/80 mt-1 uppercase">
             Seminario Mayor Santo Tomás de Aquino
           </p>
         </div>

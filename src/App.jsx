@@ -59,7 +59,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800 antialiased selection:bg-amber-500 selection:text-white">
+    <div className="min-h-[100dvh] bg-slate-100 flex flex-col font-sans text-slate-800 antialiased">
       
       {/* Barra de Navegación Institucional */}
       <Navbar
@@ -97,7 +97,7 @@ export default function App() {
                   />
                 </div>
                 
-                <h1 className="font-serif font-black text-2xl sm:text-4xl text-amber-100 tracking-tight leading-tight">
+                <h1 className="font-display font-bold text-2xl sm:text-4xl text-amber-100 tracking-wider leading-tight">
                   Seminario Mayor Santo Tomás de Aquino
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-300 font-light max-w-xl mx-auto">
@@ -108,7 +108,7 @@ export default function App() {
                 <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                   <button
                     onClick={() => abrirLogin('seminarista')}
-                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-900/30 btn-tactile flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg shadow-amber-900/30 btn-tactile flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     <User className="w-4 h-4" />
                     <span>Ingresar con Cédula (Seminaristas)</span>
@@ -117,7 +117,7 @@ export default function App() {
 
                   <button
                     onClick={() => abrirLogin('rector')}
-                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm btn-tactile flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm btn-tactile flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     <ShieldCheck className="w-4 h-4 text-amber-400" />
                     <span>Acceso de Rectoría</span>
@@ -136,7 +136,7 @@ export default function App() {
                 <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-amber-200">
                   <Calendar className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-amber-700 transition-colors">
+                <h3 className="font-serif font-bold text-lg text-slate-900 group-hover:text-amber-700 transition-colors">
                   Permisos de Salida
                 </h3>
                 <p className="text-xs text-slate-600 mt-1">
@@ -151,7 +151,7 @@ export default function App() {
                 <div className="w-12 h-12 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-sky-200">
                   <Wrench className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-sky-700 transition-colors">
+                <h3 className="font-serif font-bold text-lg text-slate-900 group-hover:text-sky-700 transition-colors">
                   Necesidades de Coordinación
                 </h3>
                 <p className="text-xs text-slate-600 mt-1">
@@ -163,10 +163,10 @@ export default function App() {
                 onClick={() => abrirLogin('seminarista')}
                 className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md card-tactile cursor-pointer group"
               >
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-indigo-200">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-emerald-200">
                   <Lightbulb className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-indigo-700 transition-colors">
+                <h3 className="font-serif font-bold text-lg text-slate-900 group-hover:text-emerald-700 transition-colors">
                   Propuestas Formativas
                 </h3>
                 <p className="text-xs text-slate-600 mt-1">

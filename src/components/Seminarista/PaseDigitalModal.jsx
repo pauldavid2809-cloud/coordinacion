@@ -27,7 +27,8 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-5 text-white text-center border-b-2 border-amber-500 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg btn-tactile"
+            aria-label="Cerrar pase digital"
+            className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl btn-tactile"
           >
             <X className="w-5 h-5" />
           </button>
@@ -39,7 +40,7 @@ export default function PaseDigitalModal({ isOpen, onClose, permiso, seminarista
               className="h-full w-auto object-contain filter drop-shadow-md"
             />
           </div>
-          <h3 className="font-serif font-bold text-sm tracking-wider uppercase text-amber-200">
+          <h3 className="font-display font-bold text-sm tracking-widest uppercase text-amber-200">
             Seminario Mayor Santo Tomás de Aquino
           </h3>
           <p className="text-[11px] text-slate-300 font-light">

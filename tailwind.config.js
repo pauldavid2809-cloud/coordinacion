@@ -20,8 +20,9 @@ export default {
         }
       },
       fontFamily: {
-        serif: ['Georgia', 'Cambria', 'serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif']
+        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        display: ['"Cinzel"', 'Georgia', 'serif'],
       },
       keyframes: {
         pulseGlow: {

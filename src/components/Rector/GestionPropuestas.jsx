@@ -50,20 +50,20 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
       {/* Barra de Filtros */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por título, dimensión o seminarista..."
-            className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-9 pr-4 py-2.5 text-base sm:text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500 min-h-[44px]"
           />
         </div>
 
         <select
           value={filtroEstado}
           onChange={(e) => setFiltroEstado(e.target.value)}
-          className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-50 border border-slate-200"
+          className="px-3 py-2.5 rounded-xl text-base sm:text-xs font-semibold bg-slate-50 border border-slate-200 min-h-[44px]"
         >
           <option value="todos">Todos los estados</option>
           <option value="pendiente">Pendientes</option>
@@ -104,7 +104,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                   {item.titulo}
                 </h4>
 
-                <span className="inline-block text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200/50">
+                <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200/60">
                   Dimensión: {item.dimension}
                 </span>
 
@@ -117,7 +117,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                 </p>
 
                 {item.observacionRector && (
-                  <div className="p-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-900">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950">
                     <strong>Respuesta de Rectoría:</strong> {item.observacionRector}
                   </div>
                 )}
@@ -126,7 +126,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
               <div className="w-full md:w-auto flex justify-end">
                 <button
                   onClick={() => abrirEdicion(item)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold btn-tactile shadow-sm"
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold btn-tactile shadow-sm min-h-[44px] flex items-center justify-center"
                 >
                   Evaluar Propuesta
                 </button>
@@ -155,7 +155,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                 <select
                   value={nuevoEstado}
                   onChange={(e) => setNuevoEstado(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm transition-[border-color,box-shadow] duration-150"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-base sm:text-sm min-h-[44px] transition-[border-color,box-shadow] duration-150 focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="pendiente">Pendiente</option>
                   <option value="en_revision">En Evaluación</option>
@@ -173,7 +173,7 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                   onChange={(e) => setObservacion(e.target.value)}
                   rows={3}
                   placeholder="Escribe comentarios formativos, indicaciones o aprobación..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm transition-[border-color,box-shadow] duration-150"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-base sm:text-sm transition-[border-color,box-shadow] duration-150 focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
@@ -181,14 +181,14 @@ export default function GestionPropuestas({ solicitudes = [], onNotify }) {
                 <button
                   type="button"
                   onClick={() => setEditandoItem(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 btn-tactile"
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 btn-tactile min-h-[44px]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md btn-tactile"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-600 text-white shadow-md btn-tactile min-h-[44px] flex items-center justify-center disabled:opacity-50"
                 >
                   {loading ? 'Guardando...' : 'Guardar Evaluación'}
                 </button>

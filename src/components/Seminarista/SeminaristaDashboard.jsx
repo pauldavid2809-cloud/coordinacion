@@ -12,7 +12,9 @@ import {
   Eye, 
   Plus, 
   Bell,
-  BellRing
+  BellRing,
+  ArrowUpRight,
+  ArrowDownLeft
 } from 'lucide-react';
 import BadgeEstado from '../Common/BadgeEstado.jsx';
 import SolicitudPermisoModal from './SolicitudPermisoModal.jsx';
@@ -79,8 +81,8 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
 
         if (esAprobado || esRechazado) {
           const titulo = esAprobado
-            ? '✅ Permiso APROBADO por Rectoría'
-            : '❌ Solicitud NO Aprobada';
+            ? 'Permiso APROBADO por Rectoría'
+            : 'Solicitud NO Aprobada';
 
           const cuerpo = s.tipo === 'permiso'
             ? `Tu permiso a "${s.destino || 'destino solicitado'}" ha sido ${esAprobado ? 'APROBADO' : 'RECHAZADO'}.${s.observacionRector ? ` Observación: "${s.observacionRector}"` : ''}`
@@ -235,20 +237,20 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
           {/* Opción 3: Propuesta */}
           <div 
             onClick={() => setModalType('propuesta')}
-            className="group cursor-pointer bg-white rounded-2xl p-5 border border-indigo-200/80 hover:border-indigo-400 shadow-sm hover:shadow-md card-tactile flex flex-col justify-between"
+            className="group cursor-pointer bg-white rounded-2xl p-5 border border-emerald-200/80 hover:border-emerald-400 shadow-sm hover:shadow-md card-tactile flex flex-col justify-between"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/15 text-indigo-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-indigo-500/20">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20">
                 <Lightbulb className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-indigo-700 transition-colors">
+              <h3 className="font-serif font-bold text-base text-slate-900 group-hover:text-emerald-700 transition-colors">
                 Presentar una Propuesta
               </h3>
               <p className="text-xs text-slate-600 mt-1 line-clamp-2">
                 Iniciativas y proyectos de mejora para la formación, fraternidad o vida comunitaria.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-700">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
               <span>Proponer idea</span>
               <Plus className="w-4 h-4" />
             </div>
@@ -343,9 +345,9 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                         <p className="text-xs text-slate-600 mt-1 font-medium">
                           Motivo: <span className="font-normal text-slate-700">{item.motivo}</span>
                         </p>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-500 mt-2 font-mono bg-slate-50 p-2 rounded-lg border border-slate-100">
-                          <span>🚪 Salida: <strong>{formatDateTime(item.fechaSalida)}</strong></span>
-                          <span>⏰ Retorno: <strong>{formatDateTime(item.fechaRetorno)}</strong></span>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600 mt-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                          <span className="flex items-center gap-1.5"><ArrowUpRight className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" /> Salida: <strong className="text-slate-800">{formatDateTime(item.fechaSalida)}</strong></span>
+                          <span className="flex items-center gap-1.5"><ArrowDownLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" /> Retorno: <strong className="text-slate-800">{formatDateTime(item.fechaRetorno)}</strong></span>
                         </div>
                       </div>
                     )}
@@ -354,8 +356,10 @@ export default function SeminaristaDashboard({ seminarista, solicitudes = [], on
                       <div>
                         <h4 className="font-bold text-slate-900 text-sm">
                           Área: <span className="text-sky-700">{item.area}</span>
-                          <span className={`ml-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                            item.urgencia === 'alta' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'
+                          <span className={`ml-2 text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
+                            item.urgencia === 'alta'
+                              ? 'bg-rose-100 text-rose-900 border-rose-200'
+                              : 'bg-slate-100 text-slate-800 border-slate-200'
                           }`}>
                             Urgencia: {item.urgencia}
                           </span>

@@ -27,7 +27,7 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-serif font-bold text-xs sm:text-base tracking-wide text-amber-100 truncate block">
+                  <span className="font-display font-bold text-xs sm:text-base tracking-wider text-amber-100 truncate block">
                     <span className="sm:hidden">Seminario Santo Tomás</span>
                     <span className="hidden sm:inline">Seminario Santo Tomás de Aquino</span>
                   </span>

@@ -101,16 +101,16 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
         <div 
           onClick={() => setActiveTab('propuestas')}
           className={`p-4 rounded-2xl border cursor-pointer bg-white shadow-sm hover:shadow-md card-tactile ${
-            activeTab === 'propuestas' ? 'border-indigo-500 ring-2 ring-indigo-400/30' : 'border-slate-200'
+            activeTab === 'propuestas' ? 'border-emerald-600 ring-2 ring-emerald-400/30' : 'border-slate-200'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Propuestas</span>
-            <Lightbulb className="w-4 h-4 text-indigo-600" />
+            <Lightbulb className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-serif font-bold text-slate-900">{propuestasPendientes}</span>
-            <span className="text-xs text-indigo-600 font-semibold">por evaluar</span>
+            <span className="text-xs text-emerald-700 font-semibold">por evaluar</span>
           </div>
         </div>
 
@@ -146,7 +146,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
           <Calendar className="w-4 h-4 text-amber-400" />
           <span>Gestión de Permisos</span>
           {permisosPendientes > 0 && (
-            <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full bg-amber-400 text-amber-950 font-black text-[10px] flex items-center justify-center">
               {permisosPendientes}
             </span>
           )}
@@ -177,7 +177,7 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          <Lightbulb className="w-4 h-4 text-indigo-400" />
+          <Lightbulb className="w-4 h-4 text-emerald-400" />
           <span>Propuestas Comunitarias</span>
         </button>
 

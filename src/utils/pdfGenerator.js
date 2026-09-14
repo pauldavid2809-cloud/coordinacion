@@ -67,7 +67,7 @@ export async function generateOrdenDeLaCasaPDF({ state, seminaristas = [] }) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(71, 85, 105); // Slate 600
-  doc.text('CURSO FORMATIVO 2026–2027 • ASAMBLEA GENERAL ELECTIVA', textStartX, headerTop + 14);
+  doc.text('CURSO FORMATIVO 2026-2027 • ASAMBLEA GENERAL ELECTIVA', textStartX, headerTop + 14);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
@@ -357,7 +357,7 @@ export async function generateOrdenDeLaCasaPDF({ state, seminaristas = [] }) {
   doc.setFont('times', 'italic');
   doc.setFontSize(7.5);
   doc.setTextColor(148, 163, 184);
-  doc.text('«Sacerdos Lux — In lumine tuo videbimus lumen»', pageWidth / 2, pageHeight - 7, { align: 'center' });
+  doc.text('«Sacerdos Lux: In lumine tuo videbimus lumen»', pageWidth / 2, pageHeight - 7, { align: 'center' });
 
   // Guardar / Descargar PDF nativo
   const fileName = `ORDEN_DE_LA_CASA_2026-2027_${Date.now()}.pdf`;

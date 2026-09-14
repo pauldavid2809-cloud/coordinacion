@@ -12,7 +12,9 @@ import {
   ChevronDown, 
   ChevronUp, 
   Sparkles,
-  FileText
+  FileText,
+  ArrowUpRight,
+  ArrowDownLeft
 } from 'lucide-react';
 import BadgeEstado from '../Common/BadgeEstado.jsx';
 import { formatDateTime, timeAgo } from '../../utils/formatters.js';
@@ -80,7 +82,7 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
     setUltimoResuelto({ id: item.id, estadoAnterior: item.estado, nombre: item.seminaristaNombre });
 
     if (onNotify) {
-      onNotify(`✅ Permiso de ${item.seminaristaNombre} APROBADO.`);
+      onNotify(`Permiso de ${item.seminaristaNombre} aprobado.`);
     }
   };
 
@@ -99,7 +101,7 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
     setUltimoResuelto({ id: item.id, estadoAnterior: item.estado, nombre: item.seminaristaNombre });
 
     if (onNotify) {
-      onNotify(`❌ Permiso de ${item.seminaristaNombre} rechazado.`);
+      onNotify(`Permiso de ${item.seminaristaNombre} rechazado.`);
     }
   };
 
@@ -237,9 +239,9 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                     "{item.motivo}"
                   </p>
 
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600 font-mono bg-white/80 p-2 rounded-xl border border-slate-100">
-                    <span>🚪 Salida: <strong>{formatDateTime(item.fechaSalida)}</strong></span>
-                    <span>⏰ Retorno previsto: <strong>{formatDateTime(item.fechaRetorno)}</strong></span>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600 bg-white/90 p-2.5 rounded-xl border border-slate-200/80">
+                    <span className="flex items-center gap-1.5"><ArrowUpRight className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" /> Salida: <strong className="text-slate-800">{formatDateTime(item.fechaSalida)}</strong></span>
+                    <span className="flex items-center gap-1.5"><ArrowDownLeft className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" /> Retorno previsto: <strong className="text-slate-800">{formatDateTime(item.fechaRetorno)}</strong></span>
                   </div>
 
                   {/* Observación registrada si ya fue resuelto */}

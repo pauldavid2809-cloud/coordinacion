@@ -116,8 +116,10 @@ export default function GestionNecesidades({ solicitudes = [], onNotify }) {
               <div className="space-y-2 flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <BadgeEstado estado={item.estado} />
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                    item.urgencia === 'alta' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-700'
+                  <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${
+                    item.urgencia === 'alta'
+                      ? 'bg-rose-100 text-rose-900 border-rose-200'
+                      : 'bg-slate-100 text-slate-800 border-slate-200'
                   }`}>
                     Urgencia: {item.urgencia}
                   </span>
