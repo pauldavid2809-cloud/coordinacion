@@ -64,13 +64,13 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
       <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col animate-modalIn">
         
         {/* Cabecera */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white flex items-center justify-between border-b border-indigo-500/20">
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-5 text-white flex items-center justify-between border-b border-amber-500/20">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center justify-center">
               <Lightbulb className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-serif font-bold text-base text-indigo-100">
+              <h3 className="font-serif font-bold text-base text-amber-100">
                 Presentar Nueva Propuesta
               </h3>
               <p className="text-xs text-slate-300">
@@ -80,7 +80,8 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white btn-tactile p-1 rounded-lg"
+            aria-label="Cerrar modal"
+            className="text-slate-400 hover:text-white btn-tactile p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl"
           >
             <X className="w-5 h-5" />
           </button>
@@ -105,7 +106,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Ej. Taller de Canto Gregoriano / Jornada de Mantenimiento Parroquial"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-3 sm:py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 transition-[border-color,box-shadow] duration-150 min-h-[44px]"
             />
           </div>
 
@@ -116,7 +117,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
             <select
               value={dimension}
               onChange={(e) => setDimension(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-3 sm:py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150 min-h-[44px]"
             >
               {DIMENSIONES.map(d => (
                 <option key={d} value={d}>{d}</option>
@@ -134,7 +135,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               rows={2}
               placeholder="¿Por qué es conveniente o necesaria esta iniciativa? ¿A quiénes beneficiará?"
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -148,7 +149,7 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
               rows={3}
               placeholder="Describe cómo se llevaría a cabo, qué recursos se requieren, fechas tentativas..."
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -157,14 +158,14 @@ export default function SolicitudPropuestaModal({ isOpen, onClose, seminarista, 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
+              className="px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 min-h-[44px] rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{loading ? 'Enviando...' : 'Enviar Propuesta'}</span>

@@ -74,7 +74,8 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white btn-tactile p-1 rounded-lg"
+            aria-label="Cerrar modal"
+            className="text-slate-400 hover:text-white btn-tactile p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl"
           >
             <X className="w-5 h-5" />
           </button>
@@ -96,7 +97,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
             <select
               value={area}
               onChange={(e) => setArea(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-3 sm:py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-base sm:text-sm text-slate-800 bg-white transition-[border-color,box-shadow] duration-150 min-h-[44px]"
             >
               {AREAS_COORDINACION.map(a => (
                 <option key={a} value={a}>{a}</option>
@@ -118,7 +119,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
                   key={u.id}
                   type="button"
                   onClick={() => setUrgencia(u.id)}
-                  className={`py-2 px-2 text-center rounded-xl text-xs font-bold border-2 chip-tactile ${
+                  className={`py-2.5 px-2 min-h-[44px] text-center rounded-xl text-xs font-bold border-2 chip-tactile flex items-center justify-center ${
                     urgencia === u.id
                       ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                       : `${u.color} bg-white`
@@ -140,7 +141,7 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
               rows={4}
               placeholder="Detalla qué material se necesita, qué elemento requiere reparación o qué situación debe coordinarse..."
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 text-base sm:text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -149,14 +150,14 @@ export default function SolicitudNecesidadModal({ isOpen, onClose, seminarista, 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
+              className="px-4 py-2.5 min-h-[44px] rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 min-h-[44px] rounded-xl bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{loading ? 'Enviando...' : 'Enviar Necesidad'}</span>

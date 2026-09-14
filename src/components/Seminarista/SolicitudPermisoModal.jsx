@@ -111,7 +111,7 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
             <select
               value={tipoPermiso}
               onChange={(e) => setTipoPermiso(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm text-slate-800 bg-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 bg-white min-h-[44px] transition-[border-color,box-shadow] duration-150"
             >
               {TIPOS_PERMISO.map(t => (
                 <option key={t} value={t}>{t}</option>
@@ -124,14 +124,14 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
               Lugar de Destino
             </label>
             <div className="relative">
-              <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
               <input
                 type="text"
                 value={destino}
                 onChange={(e) => setDestino(e.target.value)}
                 placeholder="Ej. Centro Médico La Sagrada Familia / Casa familiar"
                 required
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm text-slate-800"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 min-h-[44px] transition-[border-color,box-shadow] duration-150"
               />
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
                 value={fechaSalida}
                 onChange={(e) => setFechaSalida(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm text-slate-800"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 min-h-[44px] transition-[border-color,box-shadow] duration-150"
               />
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
                 value={fechaRetorno}
                 onChange={(e) => setFechaRetorno(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm text-slate-800"
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 min-h-[44px] transition-[border-color,box-shadow] duration-150"
               />
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
               rows={3}
               placeholder="Explica la razón del permiso y cualquier detalle relevante para los formadores..."
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-sm text-slate-800 placeholder:text-slate-400"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 text-base sm:text-sm text-slate-800 placeholder:text-slate-400 transition-[border-color,box-shadow] duration-150"
             />
           </div>
 
@@ -182,14 +182,14 @@ export default function SolicitudPermisoModal({ isOpen, onClose, seminarista, on
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-50 btn-tactile min-h-[44px]"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs shadow-md btn-tactile flex items-center gap-2 disabled:opacity-50 min-h-[44px]"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{loading ? 'Enviando...' : 'Enviar Solicitud'}</span>

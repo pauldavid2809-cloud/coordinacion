@@ -124,7 +124,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
                     placeholder="Ej. 30.413.000 o 30413000"
                     autoFocus
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-slate-900 font-medium text-sm transition-[border-color,box-shadow] duration-150 placeholder:text-slate-400"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-slate-900 font-medium text-base sm:text-sm transition-[border-color,box-shadow] duration-150 placeholder:text-slate-400"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
@@ -146,7 +146,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
               <button
                 type="submit"
                 disabled={loading || !cedulaInput.trim()}
-                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-sm shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-sm shadow-md hover:shadow-lg btn-tactile flex items-center justify-center gap-2 disabled:opacity-50 min-h-[44px]"
               >
                 <span>Entrar al Portal</span>
                 <ArrowRight className="w-4 h-4" />
@@ -166,7 +166,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, seminarist
                     placeholder="Ingresa la clave maestra"
                     autoFocus
                     required
-                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-700 focus:border-slate-700 text-slate-900 font-medium text-sm transition-[border-color,box-shadow] duration-150"
+                    className="w-full pl-4 pr-11 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-700 focus:border-slate-700 text-slate-900 font-medium text-base sm:text-sm transition-[border-color,box-shadow] duration-150"
                   />
                   <button
                     type="button"

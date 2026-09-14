@@ -122,13 +122,13 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
         
         {/* Buscador */}
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             placeholder="Buscar por seminarista, cédula, curso o destino..."
-            className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            className="w-full pl-9 pr-4 py-2.5 text-base sm:text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 min-h-[44px]"
           />
         </div>
 
@@ -332,12 +332,12 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                             value={notaPersonalizada}
                             onChange={(e) => setNotaPersonalizada(e.target.value)}
                             placeholder="O escribe otra condición personalizada..."
-                            className="flex-1 px-3 py-1.5 rounded-lg border border-emerald-300 text-xs bg-white text-slate-800 focus:ring-2 focus:ring-emerald-500 transition-[border-color,box-shadow] duration-150"
+                            className="flex-1 px-3 py-2 rounded-lg border border-emerald-300 text-base sm:text-xs bg-white text-slate-800 focus:ring-2 focus:ring-emerald-500 transition-[border-color,box-shadow] duration-150 min-h-[40px]"
                           />
                           <button
                             onClick={() => handleAprobarRapido(item, notaPersonalizada.trim())}
                             disabled={!notaPersonalizada.trim()}
-                            className="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs btn-tactile disabled:opacity-40"
+                            className="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs btn-tactile disabled:opacity-40 min-h-[40px] flex items-center justify-center"
                           >
                             Aprobar
                           </button>
@@ -355,7 +355,8 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                           </span>
                           <button
                             onClick={() => setRechazandoId(null)}
-                            className="text-slate-400 hover:text-slate-700 p-1 btn-tactile rounded-lg"
+                            aria-label="Cerrar panel de rechazo"
+                            className="text-rose-500 hover:text-rose-800 p-2 btn-tactile rounded-lg min-w-[36px] min-h-[36px] flex items-center justify-center"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -368,7 +369,7 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                               key={motivo}
                               type="button"
                               onClick={() => setMotivoRechazo(motivo)}
-                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-rose-100 text-rose-900 font-medium border border-rose-200 text-[11px] chip-tactile"
+                              className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-rose-100 text-rose-900 font-medium border border-rose-200 text-[11px] chip-tactile min-h-[32px]"
                             >
                               {motivo}
                             </button>
@@ -380,14 +381,14 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                           onChange={(e) => setMotivoRechazo(e.target.value)}
                           rows={2}
                           placeholder="Escribe el motivo del rechazo aquí..."
-                          className="w-full px-3 py-2 rounded-xl border border-rose-300 text-xs text-slate-900 bg-white focus:ring-2 focus:ring-rose-500 transition-[border-color,box-shadow] duration-150"
+                          className="w-full px-3 py-2.5 rounded-xl border border-rose-300 text-base sm:text-xs text-slate-900 bg-white focus:ring-2 focus:ring-rose-500 transition-[border-color,box-shadow] duration-150"
                         />
 
                         <div className="flex items-center justify-end gap-2 pt-1">
                           <button
                             type="button"
                             onClick={() => setRechazandoId(null)}
-                            className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-rose-100/50 font-semibold btn-tactile"
+                            className="px-4 py-2.5 rounded-xl text-rose-800 hover:bg-rose-100 hover:text-rose-950 font-semibold btn-tactile min-h-[44px]"
                           >
                             Cancelar
                           </button>
@@ -395,7 +396,7 @@ export default function GestionPermisos({ solicitudes = [], seminaristas = [], o
                             type="button"
                             onClick={() => handleConfirmarRechazo(item)}
                             disabled={isLoading || !motivoRechazo.trim()}
-                            className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md btn-tactile disabled:opacity-40 flex items-center gap-1.5"
+                            className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md btn-tactile disabled:opacity-40 flex items-center gap-1.5 min-h-[44px]"
                           >
                             <X className="w-3.5 h-3.5" />
                             <span>Confirmar Rechazo</span>
