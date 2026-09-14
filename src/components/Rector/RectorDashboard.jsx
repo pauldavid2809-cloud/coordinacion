@@ -30,8 +30,13 @@ export default function RectorDashboard({ solicitudes = [], seminaristas = [], o
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 text-white border border-amber-500/30 shadow-xl relative overflow-hidden">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center shadow-inner flex-shrink-0">
-              <ShieldCheck className="w-8 h-8 text-amber-400" />
+            <div className="w-16 h-16 rounded-2xl bg-slate-950 p-1 border border-amber-400/40 flex items-center justify-center shadow-lg flex-shrink-0">
+              <img 
+                src="/logo.svg" 
+                alt="Escudo Oficial Seminario Santo Tomás de Aquino" 
+                className="w-full h-full object-contain"
+                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">

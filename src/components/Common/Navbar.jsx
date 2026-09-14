@@ -12,8 +12,13 @@ export default function Navbar({ session, onLogout, onOpenLogin }) {
           
           {/* Logo & Institución */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-md border border-amber-300/40 text-slate-950 font-serif font-bold text-lg sm:text-xl">
-              <Church className="w-6 h-6 text-slate-950" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-950 p-1 flex items-center justify-center shadow-md border border-amber-400/40">
+              <img 
+                src="/logo.svg" 
+                alt="Escudo Seminario Santo Tomás de Aquino" 
+                className="w-full h-full object-contain"
+                onError={(e) => { e.currentTarget.src = '/logo.png'; }}
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
